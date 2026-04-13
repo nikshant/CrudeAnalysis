@@ -314,11 +314,28 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
       <div class="hsub">OPEC Monthly Oil Market Report &middot; Production &amp; Trade Flows</div>
     </div>
   </div>
-  <div class="hright">
+    <div class="hright">
     <div class="hliv"><span class="ldot"></span>MOMR MARCH 2026</div>
+    <div class="hbdg" id="dataBadge" title="">&#128202; DATA: loading…</div>
+    <button class="hbdg" id="manualRefreshBtn" onclick="manualRefresh()" style="cursor:pointer;border:1px solid rgba(245,158,11,.25);background:transparent;color:var(--txm);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 11px;border-radius:5px;letter-spacing:.06em" title="Force-fetch latest data.json">⟳ Check for Update</button>
     <div class="hbdg">OPEC + IEA DATA</div>
   </div>
 </header>
+
+<!-- DATA LOAD STATUS BANNERS -->
+<div id="dataLoadMsg" style="display:none;align-items:center;gap:10px;padding:8px 26px;background:rgba(75,142,240,.07);border-bottom:1px solid rgba(75,142,240,.2);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4B8EF0">
+  <span style="animation:bl 1s infinite">⏳</span> Loading latest data from <b>data.json</b>…
+</div>
+<div id="dataErrMsg" style="display:none;align-items:center;gap:10px;padding:8px 26px;background:rgba(240,80,80,.07);border-bottom:1px solid rgba(240,80,80,.2);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#F05050">
+  ⚠ <b>Could not load data.json.</b> Make sure the file is deployed alongside index.html.
+</div>
+<div id="staleWarn" style="display:none;align-items:center;gap:10px;padding:8px 26px;background:rgba(245,158,11,.07);border-bottom:1px solid rgba(245,158,11,.22);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);flex-wrap:wrap">
+  📅 A newer OPEC MOMR may be available (expected <span class="sw-next" style="font-weight:600"></span>).
+  Data auto-refreshes every 15 days — or click <b>⟳ Check for Update</b> in the header.
+</div>
+<div id="fetchWarn" style="display:none;align-items:center;gap:10px;padding:8px 26px;background:rgba(240,80,80,.07);border-bottom:1px solid rgba(240,80,80,.18);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#F05050">
+  <span class="fw-msg"></span>
+</div>
 
 <!-- TICKER TAPE -->
 <div class="ticker-wrap" id="tickerWrap">
@@ -333,10 +350,10 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
   <div class="hcico">🚨</div>
   <div class="hctxt">
     <div class="hcttl">⚠ Strait of Hormuz — Active Disruption</div>
-    <div class="hcsub">Effective closure since Feb 28, 2026 · ~5.5 mb/d shut-in · Brent peaked $127.8/b on Apr 2 · EIA STEO Apr 7, 2026</div>
+    <div class="hcsub" id="hrzCrisisSub">Effective closure since Feb 28, 2026 · ~5.5 mb/d shut-in · Brent peaked $127.8/b on Apr 2 · EIA STEO Apr 7, 2026</div>
   </div>
-  <div class="hcbdg">~19.6 mb/d at risk</div>
-  <div class="hcbdg" style="color:#F05050;border-color:rgba(240,80,80,.3);background:rgba(240,80,80,.07)">DEFICIT: −3.3 mb/d</div>
+  <div class="hcbdg" id="hrzAtRisk">~19.6 mb/d at risk</div>
+  <div class="hcbdg" id="hrzDeficit" style="color:#F05050;border-color:rgba(240,80,80,.3);background:rgba(240,80,80,.07)">DEFICIT: −3.3 mb/d</div>
 </div>
 
 <!-- FILTER BAR -->
@@ -524,98 +541,158 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 
 <script>
-// ══════════ DATA ══════════
-// ══════════ DATA ══════════
-const PROD=[
-  {id:0,name:'Saudi Arabia',color:'#F59E0B',opec:1},{id:1,name:'Russia',color:'#EF4444',opec:1},
-  {id:2,name:'United States',color:'#3B82F6',opec:0},{id:3,name:'Iraq',color:'#F97316',opec:1},
-  {id:4,name:'UAE',color:'#FBBF24',opec:1},{id:5,name:'Iran',color:'#DC2626',opec:1},
-  {id:6,name:'Kuwait',color:'#D97706',opec:1},{id:7,name:'Nigeria',color:'#10B981',opec:1},
-  {id:8,name:'Libya',color:'#34D399',opec:1},{id:9,name:'Venezuela',color:'#60A5FA',opec:1},
-  {id:10,name:'Brazil',color:'#22D3EE',opec:0},{id:11,name:'Canada',color:'#818CF8',opec:0},
-  {id:12,name:'Kazakhstan',color:'#A78BFA',opec:1},{id:13,name:'Norway',color:'#C084FC',opec:0},
-  {id:14,name:'Mexico',color:'#2DD4BF',opec:0},
-];
-const CONS=[
-  {id:15,name:'China',color:'#EF4444'},{id:16,name:'United States',color:'#3B82F6'},
-  {id:17,name:'India',color:'#F97316'},{id:18,name:'Japan',color:'#FBBF24'},
-  {id:19,name:'South Korea',color:'#A78BFA'},{id:20,name:'European Union',color:'#818CF8'},
-  {id:21,name:'Middle East',color:'#F59E0B'},{id:22,name:'Russia & CIS',color:'#DC2626'},
-  {id:23,name:'Southeast Asia',color:'#10B981'},{id:24,name:'All Other',color:'#6B7280'},
-];
+// ══════════ DATA LOADER + 15-DAY REFRESH ══════════
+const DATA_URL = 'data.json';
+const CACHE_KEY = 'nmcf_data';
+const CACHE_TS_KEY = 'nmcf_ts';
+const CACHE_VER_KEY = 'nmcf_ver';
+const REFRESH_MS = 15 * 24 * 60 * 60 * 1000; // 15 days in ms
 
-// Producers that route exports through Strait of Hormuz (excl. internal Middle East flows to id=21)
-// Saudi Arabia(0), Iraq(3), UAE(4), Iran(5), Kuwait(6)
-const HORMUZ_PROD = new Set([0, 3, 4, 5, 6]);
-// A flow [prod, cons, vol] is a Hormuz flow if prod is in HORMUZ_PROD and consumer != 21 (Middle East, local)
+// Runtime data — populated after fetch
+let PROD=[], CONS=[], BASE=[], SC={}, MET={}, MKS=[], I2P={}, CCRD={}, PCRD={};
+let HORMUZ_PROD=new Set(), HORMUZ_COORD=[57,26.5];
+let DATA_META={};
+const MNS=['All Months','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 function isHormuzFlow(pid, cid){ return HORMUZ_PROD.has(pid) && cid !== 21; }
 
-const BASE=[
-  [0,15,1750],[0,16,260],[0,17,820],[0,18,480],[0,19,420],[0,20,360],[0,23,310],[0,21,4550],
-  [1,15,2050],[1,17,1680],[1,20,450],[1,24,700],[1,22,4320],
-  [2,16,12300],[2,20,500],[2,15,400],
-  [3,15,890],[3,17,520],[3,20,490],[3,16,340],[3,23,260],[3,21,1780],
-  [4,15,480],[4,17,310],[4,18,290],[4,19,280],[4,23,350],[4,21,1740],
-  [5,15,900],[5,24,200],[5,21,2150],
-  [6,15,380],[6,17,210],[6,18,210],[6,20,170],[6,21,1680],
-  [7,20,310],[7,16,240],[7,17,200],[7,15,190],[7,24,480],
-  [8,20,880],[8,24,300],
-  [9,15,380],[9,16,210],[9,24,290],
-  [10,15,550],[10,16,230],[10,17,130],[10,20,200],[10,24,2270],
-  [11,15,430],[11,20,840],[11,24,300],
-  [12,15,430],[12,20,840],[12,24,300],
-  [13,20,1520],[13,24,200],
-  [14,16,480],[14,17,120],[14,24,1060],
-];
+// ── Apply fetched JSON to runtime vars ──
+function applyData(d){
+  DATA_META = d._meta || {};
+  PROD = d.producers.map(p=>({...p, opec: p.opec?1:0}));
+  CONS = d.consumers;
+  BASE = d.baseFlows;
+  SC   = d.scaleFactors;
+  MET  = d.metrics;
+  MKS  = Object.keys(MET);
+  HORMUZ_PROD = new Set(d.hormuzProducers);
+  HORMUZ_COORD = d.hormuzCoord || [57,26.5];
+  // Coords: keys are strings in JSON
+  CCRD={}; Object.entries(d.consumerCoords).forEach(([k,v])=>CCRD[+k]=v);
+  PCRD={}; Object.entries(d.producerCoords).forEach(([k,v])=>PCRD[+k]=v);
+  I2P ={};  Object.entries(d.isoToProducer).forEach(([k,v])=>I2P[+k]=v);
+}
 
-// Scale factors per producer per month [SA, Rus, US, Iraq, UAE, Iran, Kuwait, Nig, Lib, Venez, Bra, Can, Kaz, Nor, Mex]
-const SC={
-  '2025-01':[1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000],
-  '2025-02':[0.990,1.005,0.998,0.995,0.998,1.010,0.992,0.985,0.970,0.990,1.010,1.005,1.000,1.008,0.998],
-  '2025-03':[1.005,1.008,1.005,1.010,1.012,1.015,1.000,0.990,1.020,0.985,1.020,1.012,1.015,1.010,0.995],
-  '2025-04':[1.022,1.010,1.010,1.018,1.025,1.018,1.015,1.005,1.010,1.000,1.025,1.018,1.020,1.015,1.000],
-  '2025-05':[1.045,1.015,1.015,1.032,1.042,1.020,1.028,1.010,1.015,1.005,1.030,1.022,1.025,1.018,1.002],
-  '2025-06':[1.062,1.018,1.020,1.045,1.058,1.022,1.040,1.012,1.025,1.008,1.038,1.025,1.030,1.020,1.005],
-  '2025-07':[1.082,1.020,1.025,1.055,1.075,1.025,1.048,1.015,1.030,1.010,1.045,1.028,1.035,1.022,1.008],
-  '2025-08':[1.095,1.022,1.028,1.062,1.085,1.028,1.052,1.018,1.025,1.012,1.050,1.030,1.040,1.025,1.010],
-  '2025-09':[1.102,1.025,1.030,1.068,1.092,1.030,1.055,1.020,1.032,1.015,1.052,1.032,1.042,1.028,1.012],
-  '2025-10':[1.108,1.022,1.032,1.072,1.098,1.032,1.058,1.018,1.028,1.012,1.055,1.035,1.045,1.025,1.015],
-  '2025-11':[1.114,1.018,1.035,1.075,1.102,1.028,1.062,1.015,1.030,1.010,1.058,1.038,1.048,1.028,1.018],
-  '2025-12':[1.105,1.020,1.038,1.070,1.095,1.025,1.055,1.020,1.025,1.008,1.062,1.042,1.050,1.030,1.020],
-  '2026-01':[1.095,1.015,1.040,1.065,1.088,1.022,1.050,1.022,1.020,1.005,1.065,1.045,1.052,1.032,1.022],
-  '2026-02':[1.088,1.018,1.042,1.060,1.080,1.020,1.045,1.025,1.018,1.002,1.068,1.048,1.055,1.035,1.025],
-  // March 2026: Strait of Hormuz closure from Feb 28 — Gulf producers severely curtailed
-  // SA(-8%), Russia(+2%), US(+4.5%), Iraq(-15%), UAE(-12%), Iran(-25%), Kuwait(-14%)
-  '2026-03':[0.920,1.020,1.045,0.850,0.880,0.750,0.860,0.990,0.985,0.998,1.062,1.055,1.010,1.030,1.018],
-};
+// ── Persist to localStorage ──
+function cacheData(d){
+  try{
+    localStorage.setItem(CACHE_KEY, JSON.stringify(d));
+    localStorage.setItem(CACHE_TS_KEY, Date.now().toString());
+    localStorage.setItem(CACHE_VER_KEY, d._meta?.version||'');
+  }catch(e){/* storage full — ignore */}
+}
 
-// Key macro metrics per month (supply s in mb/d, demand d in mb/d, OPEC+ share o in %)
-const MET={
-  '2025-01':{s:103.2,d:102.8,o:36.2},'2025-02':{s:102.8,d:102.5,o:36.0},
-  '2025-03':{s:103.5,d:103.0,o:36.1},'2025-04':{s:103.8,d:103.2,o:36.5},
-  '2025-05':{s:104.2,d:103.5,o:36.8},'2025-06':{s:104.5,d:103.8,o:37.0},
-  '2025-07':{s:104.8,d:104.2,o:37.2},'2025-08':{s:105.1,d:104.6,o:37.5},
-  '2025-09':{s:105.3,d:104.8,o:37.6},'2025-10':{s:105.6,d:105.0,o:37.8},
-  '2025-11':{s:105.8,d:105.2,o:37.9},'2025-12':{s:105.5,d:105.8,o:37.7},
-  '2026-01':{s:105.2,d:105.3,o:37.5},'2026-02':{s:104.8,d:105.0,o:37.2},
-  // March 2026: Hormuz closure. Supply -3.8 mb/d vs prior, steep deficit
-  '2026-03':{s:101.2,d:104.5,o:35.8},
-};
-const MKS=Object.keys(MET);
-const MNS=['All Months','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-// ISO-3166-1 numeric -> producer id
-const I2P={682:0,643:1,840:2,368:3,784:4,364:5,414:6,566:7,434:8,862:9,76:10,124:11,398:12,578:13,484:14};
-// Consumer centroids [lon,lat]
-const CCRD={15:[104,35],16:[-100,38],17:[78,22],18:[138,36],19:[128,37],20:[15,52],21:[47,26],22:[58,55],23:[110,5],24:[20,8]};
-// Producer centroids [lon,lat]
-const PCRD={0:[45,24],1:[60,60],2:[-98,38],3:[43,33],4:[54,24],5:[53,32],6:[47,29],7:[8,9],8:[17,27],9:[-66,8],10:[-53,-10],11:[-96,60],12:[67,48],13:[15,65],14:[-102,24]};
-// Strait of Hormuz coordinates [lon,lat]
-const HORMUZ_COORD=[57.0, 26.5];
+// ── Check if 15-day refresh is due ──
+function needsRefresh(){
+  const ts = parseInt(localStorage.getItem(CACHE_TS_KEY)||'0',10);
+  return !ts || (Date.now() - ts) >= REFRESH_MS;
+}
+
+// ── Fetch data.json (with cache-bust when refresh due) ──
+async function fetchData(forceFresh=false){
+  const url = forceFresh ? `${DATA_URL}?v=${Date.now()}` : DATA_URL;
+  const r = await fetch(url, { cache: forceFresh ? 'no-store' : 'default' });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+// ── Show/hide data status badge in header ──
+function updDataBadge(){
+  const el = ge('dataBadge');
+  if(!el) return;
+  const v = DATA_META.version || '—';
+  const upd = DATA_META.lastUpdated || '';
+  const next = DATA_META.nextExpected || '';
+  const isStale = next && new Date() > new Date(next);
+  el.innerHTML = `&#128202; DATA: <b>${v}</b>${upd?` · ${upd}`:''}`;
+  el.title = next ? `Next expected: ${next}` : '';
+  el.style.color = isStale ? 'var(--amber)' : 'var(--txm)';
+  if(isStale){
+    const warn = ge('staleWarn');
+    if(warn){
+      warn.style.display='flex';
+      warn.querySelector('.sw-next').textContent = next;
+    }
+  }
+}
+
+// ── Show "new data loaded" toast ──
+function showUpdateToast(oldVer, newVer){
+  if(oldVer === newVer || !oldVer) return;
+  const t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:22px;right:22px;z-index:9999;background:#141829;border:1px solid rgba(34,199,126,.45);border-radius:10px;padding:12px 16px;font-family:IBM Plex Mono,monospace;font-size:11px;color:#22C77E;box-shadow:0 8px 32px rgba(0,0,0,.7);display:flex;align-items:center;gap:10px;animation:fadeInUp .3s ease';
+  t.innerHTML=`✅ Data updated <b>${oldVer}</b> → <b>${newVer}</b> &nbsp;<span style="cursor:pointer;color:var(--txm);font-size:13px" onclick="this.parentNode.remove()">✕</span>`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 7000);
+}
+
+// ── Master loader — called on page load ──
+async function loadData(){
+  let cached = null;
+  try{ const raw=localStorage.getItem(CACHE_KEY); if(raw) cached=JSON.parse(raw); }catch(e){}
+
+  if(cached && !needsRefresh()){
+    // Use cache immediately, no network request
+    applyData(cached);
+    updDataBadge();
+    bootApp();
+  } else {
+    // Show loading state
+    ge('dataLoadMsg').style.display='flex';
+    try{
+      const fresh = await fetchData(true);
+      const oldVer = cached?._meta?.version || '';
+      cacheData(fresh);
+      applyData(fresh);
+      updDataBadge();
+      ge('dataLoadMsg').style.display='none';
+      bootApp();
+      showUpdateToast(oldVer, fresh._meta?.version||'');
+    } catch(fetchErr){
+      // Network failed — fall back to stale cache if available
+      if(cached){
+        applyData(cached);
+        updDataBadge();
+        ge('dataLoadMsg').style.display='none';
+        showFetchError(true);
+        bootApp();
+      } else {
+        ge('dataLoadMsg').style.display='none';
+        ge('dataErrMsg').style.display='flex';
+      }
+    }
+  }
+}
+
+function showFetchError(stale){
+  const el = ge('fetchWarn');
+  if(el){ el.style.display='flex'; el.querySelector('.fw-msg').textContent = stale
+    ? '⚠ Could not reach server — showing cached data. Will retry on next visit.'
+    : '⚠ Could not load data.json.'; }
+}
+
+// ── Manual refresh button ──
+async function manualRefresh(){
+  const btn = ge('manualRefreshBtn');
+  if(btn){ btn.textContent='⟳ Checking…'; btn.disabled=true; }
+  try{
+    const oldVer = DATA_META.version||'';
+    const fresh = await fetchData(true);
+    cacheData(fresh);
+    applyData(fresh);
+    updDataBadge();
+    showUpdateToast(oldVer, fresh._meta?.version||'');
+    const warn=ge('staleWarn'); if(warn) warn.style.display='none';
+    const fw=ge('fetchWarn'); if(fw) fw.style.display='none';
+    render();
+  } catch(e){ showFetchError(false); }
+  finally{ if(btn){ btn.textContent='⟳ Check for Update'; btn.disabled=false; } }
+}
 
 // ══════════ STATE ══════════
 let curY='all',curMn='all';
-let selP=new Set(PROD.map(p=>p.id));
-let selC=new Set(CONS.map(c=>c.id));
+let selP=new Set();
+let selC=new Set();
 let csel=null;
 let curV='s';
 let wdata=null;
@@ -659,17 +736,32 @@ function horzVol(){
 // ══════════ CRISIS BANNER ══════════
 function updCrisisBanner(){
   const el=ge('hrzCrisis');
-  // Show crisis banner when March 2026 is in scope (the disruption month)
   const ks=sMKS();
-  const hasMar26=curY==='all'||curMn==='all'?ks.includes('2026-03'):ks.includes('2026-03');
-  if(hasMar26 && ks.includes('2026-03')){el.classList.add('on');}
-  else{el.classList.remove('on');}
+  const hz=DATA_META.hormuzCrisis||{};
+  const active=hz.active&&ks.some(k=>k>=(hz.since||'').slice(0,7));
+  if(active){
+    el.classList.add('on');
+    const sub=ge('hrzCrisisSub');
+    if(sub&&hz.since){sub.textContent=`Effective closure since ${hz.since} · ~${hz.shutInMbd||5.5} mb/d shut-in · Brent peaked $${hz.brentPeak||127.8}/b on ${hz.brentPeakDate||'Apr 2'} · EIA STEO ${DATA_META.sources?.find(s=>s.name==='EIA STEO')?.date||''}`;}
+    const bdg=ge('hrzAtRisk');if(bdg)bdg.textContent=`~${hz.totalAtRiskMbd||19.6} mb/d at risk`;
+    const def=ge('hrzDeficit');if(def)def.textContent=`DEFICIT: ${hz.deficitMbd||'−3.3'} mb/d`;
+  } else {
+    el.classList.remove('on');
+  }
 }
 
 // ══════════ INIT ══════════
-function init(){
-  const ys=ge('ysl');[['all','All Years'],['2025','2025'],['2026','2026']].forEach(([v,l])=>{const o=doc('option');o.value=v;o.textContent=l;if(v===curY)o.selected=true;ys.appendChild(o);});
-  const ms=ge('msl');MNS.forEach((n,i)=>{const o=doc('option');o.value=i===0?'all':String(i).padStart(2,'0');o.textContent=n;if(o.value===curMn)o.selected=true;ms.appendChild(o);});
+function bootApp(){
+  selP=new Set(PROD.map(p=>p.id));
+  selC=new Set(CONS.map(c=>c.id));
+  const ys=ge('ysl');
+  ys.innerHTML='';
+  const years=['all',...[...new Set(MKS.map(k=>k.split('-')[0]))].sort()];
+  years.forEach(y=>{const o=doc('option');o.value=y;o.textContent=y==='all'?'All Years':y;if(y===curY)o.selected=true;ys.appendChild(o);});
+  const ms=ge('msl');
+  ms.innerHTML='';
+  MNS.forEach((n,i)=>{const o=doc('option');o.value=i===0?'all':String(i).padStart(2,'0');o.textContent=n;if(o.value===curMn)o.selected=true;ms.appendChild(o);});
+  ge('pitm').innerHTML='';ge('citm').innerHTML='';
   bldDD('p');bldDD('c');
   document.addEventListener('click',e=>{if(!e.target.closest('.ddw')){qsa('.ddp').forEach(x=>x.classList.remove('show'));qsa('.ddb').forEach(x=>x.classList.remove('open'));}});
   ldMap();
@@ -1240,7 +1332,13 @@ function doc(t){return document.createElement(t);}
 function qsa(s){return document.querySelectorAll(s);}
 function qsas(el,s){return el.querySelectorAll(s);}
 
-window.addEventListener('DOMContentLoaded',init);
+window.addEventListener('DOMContentLoaded',()=>{
+  // Inject keyframe for toast animation
+  const s=document.createElement('style');
+  s.textContent='@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}';
+  document.head.appendChild(s);
+  loadData();
+});
 document.getElementById('legalYear').textContent=new Date().getFullYear();
 </script>
 </body>
