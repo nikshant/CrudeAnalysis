@@ -204,7 +204,7 @@ body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-h
 .na-overlay .na-ttl{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--txm);letter-spacing:.05em}
 .na-overlay .na-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txm);opacity:.6}
 
-/* SANKEY */
+/* LINKAGE */
 .sksvg{width:100%;display:block}
 
 /* MAP */
@@ -262,7 +262,7 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
 @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.bsec{grid-template-columns:1fr}.cleg{display:none}}
 @media(max-width:600px){.cards{grid-template-columns:1fr}.hdr{flex-direction:column;align-items:flex-start;gap:8px}}
 
-/* Hormuz warning on Sankey */
+/* Hormuz warning on LINKAGE */
 .hrz-warn-g{pointer-events:none}
 @keyframes hrzpulse{0%,100%{opacity:.9}50%{opacity:.35}}
 .hrz-warn-txt{animation:hrzpulse 1.8s ease-in-out infinite}
@@ -936,7 +936,7 @@ function stt(ev,h,b){ge('tph').innerHTML=h;ge('tpb').innerHTML=b;TIP.classList.a
 function htt(){TIP.classList.remove('vis');}
 function mtt(ev){let x=ev.clientX+16,y=ev.clientY-60;const W=TIP.offsetWidth||240,H=TIP.offsetHeight||130;if(x+W>window.innerWidth-8)x=ev.clientX-W-10;if(y<8)y=8;if(y+H>window.innerHeight-8)y=ev.clientY-H-10;TIP.style.left=x+'px';TIP.style.top=y+'px';}
 
-// ══════════ SANKEY ══════════
+// ══════════ LINKAGE ══════════
 function renderSK(flows){
   const svg=d3.select('#sk');svg.selectAll('*').remove();
   const W=1100,H=610,NW=158,PAD=9,mT=28,mB=20,mL=14,mR=14,CH=H-mT-mB;
