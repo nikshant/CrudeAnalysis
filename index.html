@@ -255,6 +255,8 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
   </div>
   <div class="bnews-track-outer">
     <div class="bnews-track" id="bnewsTrack">
+      <span class="bnews-item">🚨 OPEC MOMR April 2026: Hormuz shut-ins widen to 9.1 mb/d &mdash; supply deficit deepens to −5.6 mb/d as crisis enters 10th week (OPEC, May 10)</span>
+      <span class="bnews-sep">◆</span>
       <span class="bnews-item">🛢 WTI falls below $92/bbl as US-Iran ceasefire talks may resume in Pakistan &mdash; lowest in 3 weeks (TradingEconomics, Apr 15)</span>
       <span class="bnews-sep">◆</span>
       <span class="bnews-item">⚓ U.S. Navy blockade on Iranian ports in effect since Apr 14 &mdash; Iran warns vessels "will be dealt with harshly" (CNN / Al Jazeera)</span>
@@ -266,6 +268,8 @@ table.dt tr:hover td{background:rgba(255,255,255,.02)}
       <span class="bnews-item">💹 Physical crude hit near-record $150/bbl; middle distillate prices in Singapore above $290/bbl all-time high (IEA OMR Apr 2026)</span>
       <span class="bnews-sep">◆</span>
       <span class="bnews-item">🤝 Trump &amp; Iran agreed 2-week ceasefire Apr 8 &mdash; talks collapsed over weekend; new round expected before deadline (NPR / Bloomberg)</span>
+      <span class="bnews-sep">◆</span>
+      <span class="bnews-item">🚨 OPEC MOMR April 2026: Hormuz shut-ins widen to 9.1 mb/d &mdash; supply deficit deepens to −5.6 mb/d as crisis enters 10th week (OPEC, May 10)</span>
       <span class="bnews-sep">◆</span>
       <span class="bnews-item">🛢 WTI falls below $92/bbl as US-Iran ceasefire talks may resume in Pakistan &mdash; lowest in 3 weeks (TradingEconomics, Apr 15)</span>
       <span class="bnews-sep">◆</span>
@@ -542,6 +546,8 @@ const SC={
   // March 2026: Strait of Hormuz closure from Feb 28 — Gulf producers severely curtailed
   // SA(-8%), Russia(+2%), US(+4.5%), Iraq(-15%), UAE(-12%), Iran(-25%), Kuwait(-14%)
   '2026-03':[0.920,1.020,1.045,0.850,0.880,0.750,0.860,0.990,0.985,0.998,1.062,1.055,1.010,1.030,1.018],
+  // April 2026: Shut-ins widen to 9.1 mb/d (EIA STEO May 7) — SA(-18%), Iraq(-27%), UAE(-22%), Iran(-36%), Kuwait(-24%)
+  '2026-04':[0.820,1.025,1.052,0.730,0.780,0.640,0.755,0.982,0.980,0.993,1.068,1.065,1.015,1.035,1.020],
 };
 
 // Key macro metrics per month (supply s in mb/d, demand d in mb/d, OPEC+ share o in %)
@@ -555,6 +561,8 @@ const MET={
   '2026-01':{s:105.2,d:105.3,o:37.5},'2026-02':{s:104.8,d:105.0,o:37.2},
   // March 2026: Hormuz closure. Supply -3.8 mb/d vs prior, steep deficit
   '2026-03':{s:101.2,d:104.5,o:35.8},
+  // April 2026: Shut-ins widen to 9.1 mb/d — deepest supply deficit on record
+  '2026-04':{s:97.4,d:103.0,o:33.5},
 };
 const MKS=Object.keys(MET);
 const MNS=['All Months','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -583,7 +591,7 @@ function hasData(){
   if(curY==='all') return true;
   return sMKS().length > 0;
 }
-function avgSC(){const ks=sMKS();if(!ks.length)return SC['2026-03'];const a=new Array(15).fill(0);ks.forEach(k=>{(SC[k]||SC['2026-03']).forEach((v,i)=>a[i]+=v);});return a.map(v=>v/ks.length);}
+function avgSC(){const ks=sMKS();if(!ks.length)return SC['2026-04'];const a=new Array(15).fill(0);ks.forEach(k=>{(SC[k]||SC['2026-04']).forEach((v,i)=>a[i]+=v);});return a.map(v=>v/ks.length);}
 function aggM(){const ks=sMKS();if(!ks.length)return null;const s={s:0,d:0,o:0};ks.forEach(k=>{const m=MET[k];s.s+=m.s;s.d+=m.d;s.o+=m.o;});const n=ks.length;return{s:s.s/n,d:s.d/n,o:s.o/n};}
 function prvM(){const ks=sMKS();if(ks.length!==1)return null;const i=MKS.indexOf(ks[0]);return i>0?MET[MKS[i-1]]:null;}
 function flws(){
@@ -614,11 +622,18 @@ function horzVol(){
 // ══════════ CRISIS BANNER ══════════
 function updCrisisBanner(){
   const el=ge('hrzCrisis');
-  // Show crisis banner when March 2026 is in scope (the disruption month)
   const ks=sMKS();
-  const hasMar26=curY==='all'||curMn==='all'?ks.includes('2026-03'):ks.includes('2026-03');
-  if(hasMar26 && ks.includes('2026-03')){el.classList.add('on');}
-  else{el.classList.remove('on');}
+  const hasCrisis=ks.some(k=>k==='2026-03'||k==='2026-04');
+  if(hasCrisis){
+    const hasApr=ks.includes('2026-04');
+    el.querySelector('.hcsub').textContent=hasApr
+      ? 'Shut-ins widened to 9.1 mb/d in April · Supply deficit −5.6 mb/d · Crisis in 10th week · EIA STEO May 7, 2026'
+      : 'Effective closure since Feb 28, 2026 · ~5.5 mb/d shut-in · Brent peaked $127.8/b on Apr 2 · EIA STEO Apr 7, 2026';
+    el.querySelector('.hcbdg').textContent=hasApr?'~19.6 mb/d at risk':'~19.6 mb/d at risk';
+    el.classList.add('on');
+  } else {
+    el.classList.remove('on');
+  }
 }
 
 // ══════════ INIT ══════════
