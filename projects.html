@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Nishan Thapaliya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090F;--surf:#0C0F1C;--surf2:#121629;--surf3:#1a2035;
+  --bord:rgba(255,255,255,.07);--bord2:rgba(212,168,64,.22);
+  --gold:#D4A840;--amber:#F59E0B;--goldDim:rgba(212,168,64,.1);
+  --tx:#EAE0CC;--txd:rgba(234,224,204,.55);--txm:rgba(234,224,204,.28);
+  --grn:#22C77E;--blu:#4B8EF0;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;
+  min-height:100vh;overflow-x:hidden;line-height:1.6;padding-left:200px;}
+
+/* ── SIDEBAR NAV ── */
+nav{position:fixed;top:0;left:0;height:100vh;width:200px;z-index:100;
+  background:rgba(7,9,15,.97);backdrop-filter:blur(20px);
+  border-right:1px solid var(--bord);display:flex;flex-direction:column;
+  align-items:stretch;padding:32px 16px 28px;}
+.nav-logo{display:flex;flex-direction:column;align-items:center;gap:10px;
+  text-decoration:none;margin-bottom:40px;}
+.nav-logo-icon{width:46px;height:46px;border:1.5px solid var(--gold);border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:17px;font-weight:900;
+  color:var(--gold);background:var(--goldDim);}
+.nav-logo-text{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;
+  color:var(--gold);letter-spacing:.12em;text-transform:uppercase;text-align:center;line-height:1.5;}
+.nav-links{display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-links a{color:var(--txd);text-decoration:none;font-size:13px;font-weight:500;
+  padding:9px 14px;border-radius:8px;transition:all .2s;display:block;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);background:var(--goldDim);}
+.nav-cta{background:var(--goldDim);border:1px solid var(--bord2);color:var(--gold);
+  padding:10px 14px;border-radius:8px;font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
+  font-family:'IBM Plex Mono',monospace;text-align:center;margin-top:auto;
+  transition:all .2s;}
+.nav-cta:hover{background:rgba(212,168,64,.2);border-color:var(--gold);}
+
+/* ── PAGE HEADER ── */
+.page-hero{padding:80px 80px 48px;border-bottom:1px solid var(--bord);}
+.pg-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold);
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;}
+.pg-label::before{content:'';width:28px;height:1px;background:var(--gold);}
+.pg-title{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,52px);
+  font-weight:900;letter-spacing:-.03em;color:#fff;margin-bottom:10px;}
+.pg-sub{font-size:15px;color:var(--txd);max-width:520px;}
+
+/* ── PROJECTS LAYOUT ── */
+.projects-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:0;min-height:calc(100vh - 220px);}
+
+/* ── PROJECT LIST ── */
+.project-list{padding:40px 40px 60px 80px;display:flex;flex-direction:column;gap:20px;
+  border-right:1px solid var(--bord);}
+.proj-card{background:var(--surf);border:1px solid var(--bord);border-radius:12px;
+  padding:26px 28px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+.proj-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--gold);opacity:0;transition:opacity .2s;}
+.proj-card:hover,.proj-card.active{border-color:var(--bord2);transform:translateX(4px);}
+.proj-card:hover::before,.proj-card.active::before{opacity:1;}
+.proj-card.active{background:rgba(212,168,64,.05);}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.pc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-size:20px;}
+.pc-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:12px;}
+.pc-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
+  color:#fff;margin-bottom:5px;line-height:1.25;}
+.pc-summary{font-size:13px;color:var(--txd);line-height:1.6;margin-bottom:16px;}
+.pc-techs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.pc-tech{font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+  background:var(--surf2);border:1px solid var(--bord);
+  color:var(--txm);padding:3px 9px;border-radius:5px;}
+.pc-footer{display:flex;align-items:center;justify-content:space-between;}
+.pc-hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txm);
+  display:flex;align-items:center;gap:6px;}
+.pc-hint svg{width:12px;height:12px;stroke:var(--txm);fill:none;stroke-width:2;}
+.btn-view{display:inline-flex;align-items:center;gap:6px;
+  background:var(--goldDim);border:1px solid var(--bord2);color:var(--gold);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border-radius:7px;
+  text-decoration:none;transition:all .2s;}
+.btn-view:hover{background:rgba(212,168,64,.2);}
+.btn-view svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ANT FEATURES */
+.pc-features{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;
+  padding:12px 14px;background:rgba(11,197,234,.05);
+  border:1px solid rgba(11,197,234,.14);border-radius:8px;}
+.pcf{font-size:11px;color:var(--txd);line-height:1.5;
+  display:flex;align-items:baseline;gap:7px;}
+.pcf::before{content:'›';color:#0BC5EA;font-weight:700;font-size:13px;flex-shrink:0;}
+
+/* ── TREEGRAPH PANEL ── */
+.tree-panel{padding:40px 60px 60px 40px;position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;overflow:hidden;}
+.tp-empty{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;color:var(--txm);text-align:center;}
+.tp-empty svg{width:52px;height:52px;stroke:var(--txm);fill:none;stroke-width:1;opacity:.35;}
+.tp-empty h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--txm);}
+.tp-empty p{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;line-height:1.7;}
+.tp-active{flex:1;display:none;flex-direction:column;}
+.tp-active.show{display:flex;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tp-header{margin-bottom:20px;}
+.tp-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.tp-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;}
+.tp-desc{font-size:13px;color:var(--txd);margin-top:4px;line-height:1.55;}
+#treeGraph{flex:1;min-height:0;}
+#treeGraph svg{width:100%;height:100%;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--bord);padding:28px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surf);}
+.footer-l .fn{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);}
+.footer-l .fs{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txm);margin-top:2px;}
+.footer-r{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--txm);text-align:right;line-height:1.7;}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">NT</div>
+    <span class="nav-logo-text">Nishan<br>Thapaliya</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#skills">Skills</a>
+    <a href="index.html#experience">Experience</a>
+    <a href="index.html#education">Education</a>
+    <a href="projects.html" class="active">Projects</a>
+  </div>
+  <a href="assets/Nishan_Resume.docx" download class="nav-cta">⬇ Resume</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-hero">
+  <div class="pg-label">Portfolio</div>
+  <h1 class="pg-title">My Projects</h1>
+  <p class="pg-sub">A selection of tools, platforms &amp; analyses I've built — spanning data visualization, financial analytics, and AI-driven publishing.</p>
+</div>
+
+<!-- MAIN -->
+<div class="projects-layout">
+
+  <!-- PROJECT CARDS -->
+  <div class="project-list">
+
+    <!-- Project 1: Crude Oil Analysis -->
+    <div class="proj-card" data-id="crude" onclick="selectProject('crude')">
+      <div class="pc-top">
+        <div class="pc-icon" style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2);">🛢️</div>
+        <span class="pc-badge" style="background:rgba(245,158,11,.12);color:#F59E0B;border:1px solid rgba(245,158,11,.2);">Live Web App</span>
+      </div>
+      <div class="pc-name">Navigate Master — Crude Oil Flow Analysis</div>
+      <p class="pc-summary">An interactive data visualization platform tracking global crude oil supply chains and the 2026 Strait of Hormuz crisis. Features live producer-to-consumer flow maps, OPEC/IEA/EIA supply metrics, WTI &amp; Brent prices, and a breaking news ticker auto-updated by a scheduled AI agent.</p>
+      <div class="pc-techs">
+        <span class="pc-tech">D3.js</span>
+        <span class="pc-tech">TopoJSON</span>
+        <span class="pc-tech">Vanilla JS</span>
+        <span class="pc-tech">HTML5 Canvas</span>
+        <span class="pc-tech">GitHub Pages</span>
+        <span class="pc-tech">Claude AI</span>
+        <span class="pc-tech">OPEC / IEA / EIA Data</span>
+      </div>
+      <div class="pc-footer">
+        <span class="pc-hint">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Click card to explore tech tree
+        </span>
+        <a href="crude-analysis.html" target="_blank" class="btn-view">
+          View Project
+          <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project 2: ANT Portfolio Tracker -->
+    <div class="proj-card" data-id="ant" onclick="selectProject('ant')">
+      <div class="pc-top">
+        <div class="pc-icon" style="background:rgba(11,197,234,.1);border:1px solid rgba(11,197,234,.2);">📈</div>
+        <span class="pc-badge" style="background:rgba(11,197,234,.1);color:#0BC5EA;border:1px solid rgba(11,197,234,.2);">Desktop App · v5.7</span>
+      </div>
+      <div class="pc-name">ANT Portfolio Tracker</div>
+      <p class="pc-summary">A Bloomberg-style native Windows portfolio manager for tracking holdings, analyzing risk, and monitoring performance. Features live Yahoo Finance pricing, Sharpe ratio / max drawdown analytics, Sankey flow diagrams, multi-account filtering, and MSI installer packaging.</p>
+      <div class="pc-techs">
+        <span class="pc-tech">Windows Native</span>
+        <span class="pc-tech">C# / .NET</span>
+        <span class="pc-tech">SQLite</span>
+        <span class="pc-tech">Yahoo Finance API</span>
+        <span class="pc-tech">MSI Installer</span>
+        <span class="pc-tech">Risk Analytics</span>
+        <span class="pc-tech">Sankey Diagrams</span>
+      </div>
+      <div class="pc-features">
+        <div class="pcf">Live Yahoo Finance pricing · 1-min intraday · Historical data refresh</div>
+        <div class="pcf">Sharpe Ratio · Max Drawdown · Annualised Volatility · YTD Return</div>
+        <div class="pcf">Sankey flow diagram · Allocation Pie · S&amp;P 500 benchmark overlay</div>
+        <div class="pcf">Multi-account filter · Per-account holdings · Summarize Tickers view</div>
+        <div class="pcf">Export CSV · XLSX T-Index · Transaction history · Realized P&amp;L</div>
+        <div class="pcf">Sector · Industry · Market cap · P/E ratio · 52-wk range · Beta</div>
+      </div>
+      <div class="pc-footer">
+        <span class="pc-hint">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Click to explore tech tree
+        </span>
+        <a href="assets/ANT_User_Guide.html" target="_blank" class="btn-view">
+          View Docs
+          <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a href="https://navigater5.gumroad.com/l/antportfoliotracker" target="_blank" class="btn-view" style="background:rgba(34,199,126,.1);border-color:rgba(34,199,126,.3);color:#22C77E;">
+          🛒 Gumroad
+          <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+        <a href="assets/ANT_Portfolio_Tracker_v5.7.msi" download class="btn-view" style="background:rgba(11,197,234,.1);border-color:rgba(11,197,234,.25);color:#0BC5EA;">
+          ⬇ Installer
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TREEGRAPH PANEL -->
+  <div class="tree-panel">
+    <div class="tp-empty" id="tpEmpty">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <h3>Tech Architecture</h3>
+      <p>Select a project to explore<br>its technical breakdown</p>
+    </div>
+    <div class="tp-active" id="tpActive">
+      <div class="tp-header">
+        <div class="tp-label">Tech Stack Breakdown</div>
+        <div class="tp-name" id="tpName"></div>
+        <div class="tp-desc" id="tpDesc"></div>
+      </div>
+      <div id="treeGraph"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-l">
+    <div class="fn">Nishan Thapaliya</div>
+    <div class="fs">Senior BI Developer &amp; Technical Lead · Plano, TX</div>
+  </div>
+  <div class="footer-r">&copy; 2026 Navigate Master<br>Thapaliya &amp; Thapaliya LLC</div>
+</footer>
+
+<script>
+const PROJECTS = {
+  crude: {
+    name: 'Crude Oil Flow Analysis',
+    desc: 'Interactive web platform tracking the 2026 Strait of Hormuz crisis with live maps, supply metrics, and AI-automated breaking news.',
+    color: '#F59E0B',
+    tree: {
+      name: 'Crude Oil Analysis',
+      children: [
+        { name: 'Frontend', color: '#4B8EF0', children: [
+          { name: 'D3.js v7', leaf: true },
+          { name: 'TopoJSON', leaf: true },
+          { name: 'HTML5 Canvas', leaf: true },
+          { name: 'CSS Animation', leaf: true },
+          { name: 'Vanilla JS', leaf: true },
+        ]},
+        { name: 'Data Sources', color: '#22C77E', children: [
+          { name: 'OPEC MOMR', leaf: true },
+          { name: 'IEA OMR', leaf: true },
+          { name: 'EIA STEO', leaf: true },
+          { name: 'JSON Config', leaf: true },
+        ]},
+        { name: 'Infrastructure', color: '#F97316', children: [
+          { name: 'GitHub Pages', leaf: true },
+          { name: 'Custom CNAME', leaf: true },
+          { name: 'Google Analytics', leaf: true },
+          { name: 'SEO / Sitemap', leaf: true },
+        ]},
+        { name: 'AI Automation', color: '#D4A840', children: [
+          { name: 'Claude AI Agent', leaf: true },
+          { name: 'Scheduled Routine', leaf: true },
+          { name: 'Web Search', leaf: true },
+          { name: 'Auto Git Push', leaf: true },
+        ]},
+      ]
+    }
+  },
+  ant: {
+    name: 'ANT Portfolio Tracker',
+    desc: 'Bloomberg-style Windows desktop app for portfolio management, risk analytics, and real-time performance monitoring.',
+    color: '#0BC5EA',
+    tree: {
+      name: 'ANT Tracker v5.7',
+      children: [
+        { name: 'Core App', color: '#0BC5EA', children: [
+          { name: 'C# / .NET', leaf: true },
+          { name: 'Native Windows', leaf: true },
+          { name: 'SQLite DB', leaf: true },
+          { name: 'MSI Installer', leaf: true },
+        ]},
+        { name: 'Market Data', color: '#22C77E', children: [
+          { name: 'Yahoo Finance API', leaf: true },
+          { name: 'Live Pricing', leaf: true },
+          { name: 'Intraday 1-min', leaf: true },
+          { name: 'Historical Data', leaf: true },
+        ]},
+        { name: 'Analytics', color: '#F59E0B', children: [
+          { name: 'Sharpe Ratio', leaf: true },
+          { name: 'Max Drawdown', leaf: true },
+          { name: 'Volatility', leaf: true },
+          { name: 'P&L Tracking', leaf: true },
+        ]},
+        { name: 'Visualization', color: '#9B6DFF', children: [
+          { name: 'Sankey Diagrams', leaf: true },
+          { name: 'Performance Chart', leaf: true },
+          { name: 'Allocation Pie', leaf: true },
+          { name: 'Holdings Table', leaf: true },
+        ]},
+      ]
+    }
+  }
+};
+
+let currentProject = null;
+
+function selectProject(id) {
+  // Update card active states
+  document.querySelectorAll('.proj-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-id="${id}"]`).classList.add('active');
+
+  const proj = PROJECTS[id];
+  if (!proj) return;
+  currentProject = id;
+
+  // Show panel
+  document.getElementById('tpEmpty').style.display = 'none';
+  const active = document.getElementById('tpActive');
+  active.classList.remove('show');
+  void active.offsetWidth;
+  active.classList.add('show');
+
+  document.getElementById('tpName').textContent = proj.name;
+  document.getElementById('tpDesc').textContent = proj.desc;
+
+  renderTree(proj.tree, proj.color);
+}
+
+function renderTree(data, rootColor) {
+  const container = document.getElementById('treeGraph');
+  container.innerHTML = '';
+
+  const W = container.clientWidth || 480;
+  const H = container.clientHeight || 360;
+
+  const svg = d3.select('#treeGraph').append('svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('width', '100%').style('height', '100%');
+
+  const root = d3.hierarchy(data);
+  d3.tree().size([H - 60, W - 220])
+    .separation((a, b) => a.parent === b.parent ? 1 : 1.4)(root);
+
+  // Half-width helper — computed from text length, same formula used for links + nodes
+  const SK = 10; // parallelogram skew px
+  function halfW(d) {
+    if (d.depth === 0) return 0;
+    return d.depth === 1
+      ? Math.max(96, d.data.name.length * 7.4) / 2
+      : Math.max(104, d.data.name.length * 6.6) / 2;
+  }
+
+  // Shift group so widest category node sits fully inside the SVG
+  const catShift = root.children ? root.children[0].y : 0;
+  const maxHalfCat = root.children
+    ? Math.max(...root.children.map(d => halfW(d))) : 52;
+  const gX = maxHalfCat + SK + 14 - catShift; // +SK for parallelogram overhang
+  const g = svg.append('g').attr('transform', `translate(${gX},30)`);
+
+  // Elbow links: start at RIGHT EDGE of source, end at LEFT EDGE of target
+  // so lines stop exactly where the shape boundary begins — no piercing
+  function elbowLink(d) {
+    const x1  = d.source.y + halfW(d.source); // right edge of source shape
+    const x2  = d.target.y - halfW(d.target); // left edge of target shape
+    const mid = (x1 + x2) / 2;
+    return `M${x1},${d.source.x} H${mid} V${d.target.x} H${x2}`;
+  }
+
+  // Draw links first (skip root→cat since root is invisible)
+  g.selectAll('.lnk')
+    .data(root.links().filter(d => d.source.depth > 0))
+    .join('path')
+    .attr('fill', 'none')
+    .attr('stroke', d => {
+      const c = d.source.data.color || d.source.parent?.data?.color || '#888';
+      return c.length === 7 ? c + '38' : 'rgba(255,255,255,.07)';
+    })
+    .attr('stroke-width', 1.5)
+    .attr('d', elbowLink);
+
+  // Draw nodes on top (links behind, shapes in front)
+  root.descendants().forEach(d => {
+    if (d.depth === 0) return; // root hidden
+    const isCat  = d.depth === 1;
+    const isLeaf = d.depth === 2;
+    const color  = isCat ? (d.data.color || '#888') : (d.parent?.data?.color || '#888');
+    const rgb    = hexRgb(color);
+    const hw     = halfW(d);          // half-width
+    const nw     = hw * 2;
+    const nh     = isCat ? 30 : 26;
+
+    const ng = g.append('g').attr('transform', `translate(${d.y},${d.x})`);
+
+    if (isCat) {
+      // ── Parallelogram (I/O flowchart symbol) ──
+      ng.append('polygon')
+        .attr('points',
+          `${-hw+SK},${-nh/2} ${hw+SK},${-nh/2} ${hw-SK},${nh/2} ${-hw-SK},${nh/2}`)
+        .attr('fill', `rgba(${rgb},.2)`)
+        .attr('stroke', color)
+        .attr('stroke-width', 1.5);
+    } else {
+      // ── Pill / rounded rect for leaf nodes ──
+      ng.append('rect')
+        .attr('x', -hw).attr('y', -nh/2)
+        .attr('width', nw).attr('height', nh).attr('rx', nh/2)
+        .attr('fill', `rgba(${rgb},.11)`)
+        .attr('stroke', color)
+        .attr('stroke-width', 1);
+    }
+
+    ng.append('text')
+      .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+      .attr('fill', isLeaf ? `rgba(${rgb},.9)` : color)
+      .attr('font-size', isCat ? '10.5' : '10')
+      .attr('font-family', 'IBM Plex Mono, monospace')
+      .attr('font-weight', isCat ? '600' : '400')
+      .attr('letter-spacing', isCat ? '.06em' : '0')
+      .text(d.data.name);
+  });
+}
+
+function hexRgb(h) {
+  return [1, 3, 5].map(i => parseInt(h.slice(i, i+2), 16)).join(',');
+}
+
+// Select first project on load
+window.addEventListener('load', () => selectProject('crude'));
+</script>
+</body>
+</html>

@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ANT Portfolio Tracker — User Guide v5.7</title>
+<style>
+:root{
+  --bg:#08101E;--bg2:#0D1728;--bg3:#111E30;--bg4:#16253A;
+  --border:#1E3050;--border2:#253a56;
+  --acc:#0BC5EA;--acc2:#0097B2;--acc3:#00D4FF;
+  --green:#38E57A;--red:#FF5F6D;--gold:#F6C90E;--purple:#9B6DFF;
+  --text:#D6E8FF;--text2:#8BAACF;--text3:#3F5270;
+  --fm:"SF Pro Display","Segoe UI",system-ui,sans-serif;
+  --fb:"SF Pro Text","Segoe UI",system-ui,sans-serif;
+  --sidebar:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.65;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+nav#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;overflow-y:auto
+}
+.nav-logo{
+  padding:28px 22px 20px;border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:4px
+}
+.nav-logo .brand{font-size:1.2rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.nav-logo .brand span{color:var(--acc)}
+.nav-logo .ver{font-size:.7rem;color:var(--text3);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.nav-section{padding:18px 14px 6px;font-size:.62rem;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
+nav a{
+  display:flex;align-items:center;gap:10px;padding:9px 14px 9px 16px;
+  color:var(--text2);text-decoration:none;font-size:.82rem;font-weight:500;
+  border-left:2px solid transparent;transition:all .15s;border-radius:0 6px 6px 0;margin:1px 8px 1px 0
+}
+nav a:hover{background:var(--bg3);color:var(--text);border-left-color:var(--border2)}
+nav a.active{background:rgba(11,197,234,.1);color:var(--acc);border-left-color:var(--acc);font-weight:600}
+nav a svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nav-footer{margin-top:auto;padding:16px 18px;border-top:1px solid var(--border);font-size:.72rem;color:var(--text3);line-height:1.5}
+.nav-footer a{color:var(--acc);text-decoration:none}
+
+/* ── MAIN ── */
+main{margin-left:var(--sidebar);flex:1;padding:0}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#0B1830 0%,#091422 60%,#060e1a 100%);
+  border-bottom:1px solid var(--border);padding:60px 60px 52px;
+  position:relative;overflow:hidden
+}
+.hero::before{
+  content:"";position:absolute;top:-40px;right:-60px;width:420px;height:420px;
+  background:radial-gradient(circle,rgba(11,197,234,.12) 0%,transparent 70%);pointer-events:none
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;background:rgba(11,197,234,.12);
+  color:var(--acc);border:1px solid rgba(11,197,234,.25);border-radius:20px;
+  padding:4px 14px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px
+}
+.hero-badge svg{width:12px;height:12px;fill:currentColor}
+.hero h1{font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1.1;margin-bottom:14px}
+.hero h1 span{color:var(--acc)}
+.hero p{font-size:1.05rem;color:var(--text2);max-width:540px;line-height:1.7}
+.hero-meta{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap}
+.hero-meta-item{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--text3)}
+.hero-meta-item svg{width:14px;height:14px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── SECTIONS ── */
+.section{padding:52px 60px;border-bottom:1px solid var(--border)}
+.section:last-child{border-bottom:none}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.section-icon{
+  width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.section-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic-blue{background:rgba(11,197,234,.15);color:var(--acc)}
+.ic-green{background:rgba(56,229,122,.12);color:var(--green)}
+.ic-gold{background:rgba(246,201,14,.1);color:var(--gold)}
+.ic-purple{background:rgba(155,109,255,.12);color:var(--purple)}
+.ic-red{background:rgba(255,95,109,.1);color:var(--red)}
+.ic-cyan{background:rgba(0,212,255,.1);color:var(--acc3)}
+.ic-teal{background:rgba(0,180,160,.12);color:#00C8A8}
+.section-num{font-size:.65rem;font-weight:800;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.section h2{font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1.15}
+.section-sub{font-size:.95rem;color:var(--text2);margin-top:6px;margin-bottom:32px;max-width:620px;line-height:1.6}
+
+/* ── STEPS ── */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:20px;padding:20px 0;border-bottom:1px dashed var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{
+  width:36px;height:36px;border-radius:50%;background:rgba(11,197,234,.15);
+  border:1.5px solid rgba(11,197,234,.3);color:var(--acc);
+  font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px
+}
+.step-body h4{font-size:.95rem;font-weight:700;color:#fff;margin-bottom:6px}
+.step-body p{font-size:.85rem;color:var(--text2);line-height:1.6}
+.step-body .note{
+  background:rgba(11,197,234,.07);border:1px solid rgba(11,197,234,.18);border-radius:8px;
+  padding:10px 14px;font-size:.8rem;color:var(--acc);margin-top:10px;display:flex;gap:8px;align-items:flex-start
+}
+.step-body .note svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
+.step-body .warn{
+  background:rgba(246,201,14,.07);border:1px solid rgba(246,201,14,.2);border-radius:8px;
+  padding:10px 14px;font-size:.8rem;color:var(--gold);margin-top:10px;display:flex;gap:8px;align-items:flex-start
+}
+.step-body .warn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
+
+/* ── CARDS GRID ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:4px}
+.card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 16px;transition:border-color .15s
+}
+.card:hover{border-color:var(--border2)}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.card-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card h4{font-size:.85rem;font-weight:700;color:#fff;margin-bottom:5px}
+.card p{font-size:.78rem;color:var(--text2);line-height:1.55}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin-top:4px}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg4)}
+thead th{padding:11px 16px;font-size:.72rem;font-weight:700;color:var(--text3);text-align:left;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody td{padding:11px 16px;font-size:.82rem;color:var(--text2);vertical-align:top}
+tbody td:first-child{color:var(--text);font-weight:600}
+.tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:12px;font-size:.68rem;font-weight:700}
+.tag-blue{background:rgba(11,197,234,.15);color:var(--acc)}
+.tag-green{background:rgba(56,229,122,.12);color:var(--green)}
+.tag-gold{background:rgba(246,201,14,.1);color:var(--gold)}
+
+/* ── FIELD LIST ── */
+.fields{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.field{
+  display:flex;gap:14px;align-items:flex-start;background:var(--bg3);
+  border:1px solid var(--border);border-radius:10px;padding:13px 16px
+}
+.field-name{
+  background:rgba(11,197,234,.12);color:var(--acc);border:1px solid rgba(11,197,234,.2);
+  border-radius:6px;padding:2px 10px;font-size:.72rem;font-weight:700;font-family:monospace;
+  white-space:nowrap;flex-shrink:0;margin-top:1px
+}
+.field-desc{font-size:.82rem;color:var(--text2);line-height:1.55}
+.field-desc strong{color:var(--text);font-weight:600}
+
+/* ── ALERT BOXES ── */
+.alert{
+  display:flex;gap:12px;align-items:flex-start;border-radius:10px;padding:14px 18px;margin-top:16px;font-size:.83rem;line-height:1.55
+}
+.alert svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+.alert-info{background:rgba(11,197,234,.08);border:1px solid rgba(11,197,234,.2);color:var(--acc)}
+.alert-warn{background:rgba(246,201,14,.07);border:1px solid rgba(246,201,14,.2);color:var(--gold)}
+.alert-danger{background:rgba(255,95,109,.07);border:1px solid rgba(255,95,109,.2);color:var(--red)}
+.alert-success{background:rgba(56,229,122,.07);border:1px solid rgba(56,229,122,.2);color:var(--green)}
+
+/* ── PATH BOX ── */
+.path-box{
+  background:var(--bg4);border:1px solid var(--border);border-radius:8px;
+  padding:12px 18px;font-family:monospace;font-size:.83rem;color:var(--acc3);
+  display:flex;align-items:center;gap:10px;margin-top:8px
+}
+.path-box svg{width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ── FILE LIST ── */
+.file-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.file-row{
+  display:flex;gap:14px;align-items:center;background:var(--bg3);
+  border:1px solid var(--border);border-radius:8px;padding:11px 14px
+}
+.file-icon{width:30px;height:30px;border-radius:7px;background:var(--bg4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.file-icon svg{width:14px;height:14px;stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.file-name{font-family:monospace;font-size:.78rem;color:var(--acc3);font-weight:600;min-width:180px}
+.file-desc{font-size:.78rem;color:var(--text2)}
+
+/* ── FAQ ── */
+.faqs{display:flex;flex-direction:column;gap:12px}
+.faq{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.faq-q{
+  padding:16px 20px;font-size:.88rem;font-weight:700;color:#fff;
+  display:flex;align-items:flex-start;gap:12px;cursor:default
+}
+.faq-q .q-badge{
+  background:rgba(11,197,234,.15);color:var(--acc);border-radius:6px;
+  padding:2px 8px;font-size:.68rem;font-weight:800;flex-shrink:0;margin-top:2px
+}
+.faq-a{padding:0 20px 16px 20px;font-size:.83rem;color:var(--text2);line-height:1.65;border-top:1px solid var(--border)}
+.faq-a p{padding-top:14px}
+
+/* ── LICENSE CARDS ── */
+.lic-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lic-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:24px;
+  display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden
+}
+.lic-card.full{border-color:rgba(56,229,122,.3)}
+.lic-card.full::before{
+  content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;
+  background:radial-gradient(circle,rgba(56,229,122,.12) 0%,transparent 70%);pointer-events:none
+}
+.lic-card.trial::before{
+  content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;
+  background:radial-gradient(circle,rgba(246,201,14,.1) 0%,transparent 70%);pointer-events:none
+}
+.lic-type{font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.lic-card.trial .lic-type{color:var(--gold)}
+.lic-card.full .lic-type{color:var(--green)}
+.lic-card h3{font-size:1.3rem;font-weight:800;color:#fff}
+.lic-card p{font-size:.82rem;color:var(--text2);line-height:1.55}
+.lic-features{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.lic-features li{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text2)}
+.lic-features li svg{width:13px;height:13px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ── EXPORT GRID ── */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.export-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:20px;display:flex;flex-direction:column;gap:10px
+}
+.export-card .exp-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.export-card .exp-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.export-card h4{font-size:.88rem;font-weight:700;color:#fff}
+.export-card p{font-size:.78rem;color:var(--text2);line-height:1.5}
+.export-card .exp-format{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+/* ── KEY FORMAT ── */
+.key-format{
+  background:var(--bg4);border:1px solid var(--border);border-radius:10px;
+  padding:18px 22px;font-family:monospace;font-size:1rem;color:#fff;
+  text-align:center;letter-spacing:.15em;margin:12px 0
+}
+.key-format .k-seg{color:var(--acc)}
+.key-format .k-sep{color:var(--text3)}
+.key-format .k-chk{color:var(--gold)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:28px 0}
+
+@media print {
+  nav#sidebar { display: none !important; }
+  main { margin-left: 0 !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 13px; }
+  .hero { background: #1a1a2e !important; padding: 30px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .section { padding: 24px 36px !important; page-break-inside: avoid; }
+  .card, .faq, .file-row, .field { page-break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="brand"><span>ANT</span> Portfolio Tracker</div>
+    <div class="ver">User Guide · v5.7</div>
+  </div>
+
+  <div class="nav-section">Navigation</div>
+  <a href="#getting-started" class="active">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Getting Started
+  </a>
+  <a href="#dashboard">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="#holdings">
+    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Holdings
+  </a>
+  <a href="#transactions">
+    <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+    Transactions
+  </a>
+  <a href="#risk">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Risk Analysis
+  </a>
+  <a href="#settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+    Settings
+  </a>
+  <a href="#export">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exporting Data
+  </a>
+  <a href="#data">
+    <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    Data &amp; Backups
+  </a>
+  <a href="#license">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    License
+  </a>
+  <a href="#faq">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    FAQ
+  </a>
+
+  <div class="nav-footer">
+    &copy; 2026 Thapaliya &amp; Thapaliya LLC<br>
+    dba NavigateMaster<br>
+    <a href="mailto:nishan@navigatemaster.com">nishan@navigatemaster.com</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 16 16"><path d="M8 1l1.8 3.6L14 5.6l-3 2.9.7 4.1L8 10.6l-3.7 2-1-4.1L.3 5.6l4.2-.6z"/></svg>
+    Official User Guide
+  </div>
+  <h1>ANT Portfolio<br><span>Tracker</span></h1>
+  <p>A Bloomberg-style desktop portfolio manager for tracking holdings, analysing risk, and monitoring performance — all in one native Windows application.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Version 5.7
+    </div>
+    <div class="hero-meta-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Windows 10 / 11
+    </div>
+    <div class="hero-meta-item">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.36a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      nishan@navigatemaster.com
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ 1. GETTING STARTED ═══════ -->
+<section class="section" id="getting-started">
+  <div class="section-num">Section 01</div>
+  <div class="section-header">
+    <div class="section-icon ic-blue">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <h2>Getting Started</h2>
+  </div>
+  <p class="section-sub">From installation to your first login — get up and running in under 5 minutes.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Installation</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Run the MSI Installer</h4>
+        <p>Double-click <strong style="color:var(--acc3)">ANT Portfolio Tracker-5.7.0-win64.msi</strong> and follow the on-screen prompts. No admin password is required for a standard install.</p>
+        <div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>If you have a previous version installed, simply run the new installer over it — no uninstall needed. Your data is preserved automatically.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Launch the App</h4>
+        <p>Open <strong>ANT Portfolio Tracker</strong> from the Start Menu or Desktop shortcut. A native Windows window opens — no browser required.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Complete First-Time Setup</h4>
+        <p>On first launch you are taken to the Setup screen automatically. Fill in the following fields:</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fields" style="margin-top:20px">
+    <div class="field">
+      <div class="field-name">Username</div>
+      <div class="field-desc">At least <strong>3 characters</strong>. This is your login name.</div>
+    </div>
+    <div class="field">
+      <div class="field-name">Password</div>
+      <div class="field-desc">At least <strong>6 characters</strong>. Enter it twice to confirm.</div>
+    </div>
+    <div class="field">
+      <div class="field-name">License Type</div>
+      <div class="field-desc">Choose <strong>Trial</strong> for a free 90-day period, or <strong>Full</strong> if you have a product key.</div>
+    </div>
+    <div class="field">
+      <div class="field-name">Product Key</div>
+      <div class="field-desc">Only required for Full license. Format: <strong style="font-family:monospace;color:var(--acc3)">ANT-XXXXX-XXXXX-XXXXX-CCCCC</strong></div>
+    </div>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:20px">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span>Click <strong>Create Account</strong> — you are logged in automatically and taken to the Dashboard.</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Logging In &amp; Out</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">→</div>
+      <div class="step-body">
+        <h4>To log in</h4>
+        <p>Enter your username and password on the Login screen, then click <strong>Sign In</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">→</div>
+      <div class="step-body">
+        <h4>To log out</h4>
+        <p>Click <strong>Logout</strong> in the top-right corner of the app at any time.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">→</div>
+      <div class="step-body">
+        <h4>To change your password</h4>
+        <p>Go to <strong>Settings → Change Password</strong>. Enter your current password, then your new password twice, and click <strong>Save</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 2. DASHBOARD ═══════ -->
+<section class="section" id="dashboard">
+  <div class="section-num">Section 02</div>
+  <div class="section-header">
+    <div class="section-icon ic-cyan">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    </div>
+    <h2>Dashboard</h2>
+  </div>
+  <p class="section-sub">The Dashboard is your portfolio's home screen — a live snapshot of performance, value, and risk across all or selected accounts.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Summary Cards</h3>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon ic-blue"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <h4>Portfolio Value</h4>
+      <p>Current live market value of all open holdings.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-green"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <h4>Today's P/L</h4>
+      <p>Dollar gain or loss since yesterday's market close, with percentage shown.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 3v18"/></svg></div>
+      <h4>Total Cost Basis</h4>
+      <p>Total amount invested across all open positions.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-purple"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h4>Total P/L</h4>
+      <p>Unrealised gain or loss: Portfolio Value minus Cost Basis.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-teal"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+      <h4>Total Return %</h4>
+      <p>P/L expressed as a percentage of the cost basis.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <h4>YTD Return</h4>
+      <p>Year-to-date performance percentage.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-green"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+      <h4>Sharpe Ratio</h4>
+      <p>Risk-adjusted return. Higher is better (above 1.0 is good).</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-red"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h4>Max Drawdown</h4>
+      <p>Largest peak-to-trough decline in portfolio value.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h4>Annualised Volatility</h4>
+      <p>Standard deviation of daily returns, scaled to annual.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Account Filter — Multi-Select</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open the Filter Dropdown</h4>
+        <p>Click the <strong>Filter by Account</strong> button at the top of the Dashboard. A dropdown panel opens showing all your configured accounts.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Select One or More Accounts</h4>
+        <p>Check any number of accounts. The button label updates automatically — it shows the account name if one is selected, or <strong>"N Accounts"</strong> for multiple.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>All Cards and Charts Update Instantly</h4>
+        <p>Every summary card, the performance chart, the holdings snapshot, and the allocation pie chart all reflect only the selected accounts.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Clear the Filter</h4>
+        <p>Click the <strong>All</strong> button next to the dropdown to instantly reset and show your full portfolio.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Portfolio Performance Chart</h3>
+  <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+    <div class="card">
+      <div class="card-icon ic-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h4>Time Periods</h4>
+      <p>1D · 3D · 5D · 1W · 10D · 1M · 3M · 6M · YTD · 1Y · 3Y · 5Y · All</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-green"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <h4>$ / % Toggle</h4>
+      <p>Switch between dollar value view and percentage return view.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-purple"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h4>Line / Bar Toggle</h4>
+      <p>Switch between a smooth line chart and a column bar chart.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+      <h4>S&amp;P 500 Overlay</h4>
+      <p>Compare your portfolio against the S&amp;P 500 benchmark on the same chart.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:20px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div>
+      <strong>1D Intraday Data:</strong> When the <strong>1D</strong> period is selected, the chart uses 1-minute interval intraday data. The x-axis displays times in Eastern Time (HH:MM format) for the current trading session.
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:10px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div>
+      <strong>Period Button Loading:</strong> Clicking any period button dims the chart to 35% opacity while data loads, then snaps back to full opacity when rendering is complete.
+    </div>
+  </div>
+
+  <div class="alert alert-success" style="margin-top:10px">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <div>
+      <strong>Auto-Refresh:</strong> The chart refreshes automatically — every <strong>5 seconds</strong> during NYSE market hours (Mon–Fri 9:30 AM–4:00 PM ET) and every <strong>30 seconds</strong> outside market hours. Background refreshes are seamless with no visible flicker.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Holdings Snapshot</h3>
+  <p style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:12px">The Holdings Snapshot on the Dashboard gives you a quick at-a-glance view of your open positions. In v5.7, the snapshot always groups holdings <strong style="color:var(--text)">by Account</strong> — the Group by toggle from earlier versions has been removed. This ensures a consistent, account-level view at all times.</p>
+  <div class="alert alert-info">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>The Account filter at the top of the Dashboard applies to the Holdings Snapshot as well — select specific accounts to narrow the snapshot view.</span>
+  </div>
+</section>
+
+<!-- ═══════ 3. HOLDINGS ═══════ -->
+<section class="section" id="holdings">
+  <div class="section-num">Section 03</div>
+  <div class="section-header">
+    <div class="section-icon ic-green">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    </div>
+    <h2>Holdings</h2>
+  </div>
+  <p class="section-sub">Live-priced positions computed from your transaction history. Filter by account, view the allocation breakdown, switch to the Sankey flow diagram, or consolidate by ticker with Summarize Tickers.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Holdings Table Columns</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Account</td><td>Brokerage account name</td></tr>
+        <tr><td>Ticker</td><td>Stock symbol — click to open Risk Analysis for that stock</td></tr>
+        <tr><td>Total Qty</td><td>Total shares bought across all transactions</td></tr>
+        <tr><td>Remaining Qty</td><td>Shares still held (total bought minus sold)</td></tr>
+        <tr><td>Avg Share Price</td><td>Weighted average cost per share</td></tr>
+        <tr><td>Cost Basis</td><td>Remaining shares × average cost per share</td></tr>
+        <tr><td>Current Price</td><td>Live market price from Yahoo Finance</td></tr>
+        <tr><td>Day P/L</td><td>Dollar change since previous market close</td></tr>
+        <tr><td>Day P/L %</td><td>Percentage change since previous close</td></tr>
+        <tr><td>Running P/L</td><td>Unrealised gain/loss on remaining shares</td></tr>
+        <tr><td>Comprehensive P/L</td><td>Running P/L plus realised gains from sold shares</td></tr>
+        <tr><td>All Paid For</td><td>Total gross amount paid across all buy transactions</td></tr>
+        <tr><td>Settled Proceeds</td><td>Total received from sell transactions</td></tr>
+        <tr><td>Closed Qty</td><td>Number of shares sold</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-info" style="margin-top:14px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>Use the <strong>column chip toggles</strong> above the table to show or hide individual columns.</span>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Account Filter — Multi-Select</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Click the Filter by Account Dropdown</h4>
+        <p>Same multi-select control as the Dashboard. Check one or more accounts to narrow the view.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Holdings Table, Allocation Chart, Sankey, and Summarize Tickers all Filter Together</h4>
+        <p>Every visual on the Holdings page updates simultaneously based on the selected accounts — including the Sankey flow diagram and the Summarize Tickers view when they are open.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Click All to Reset</h4>
+        <p>The <strong>All</strong> button clears the filter and returns all accounts to view.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Sankey Flow Chart</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Click "Sankey View"</h4>
+        <p>The button is in the top-right of the Holdings card. The table is replaced by a Sankey flow diagram.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Read the Flow</h4>
+        <p>The diagram visualises how your portfolio value flows from <strong>Accounts → Tickers</strong>. Wider bands = larger allocation.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Account Filter Applies Here Too</h4>
+        <p>If you have an account filter active, the Sankey only shows the selected accounts' positions. Change the filter and the diagram updates immediately.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Click "Sankey View" Again to Return to the Table</h4>
+        <p>The button toggles between table view and Sankey view. Note: Sankey View and Summarize Tickers are mutually exclusive — opening one automatically closes the other.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Summarize Tickers</h3>
+  <p style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:20px">Summarize Tickers consolidates your entire portfolio into a single row per ticker symbol, aggregating shares and P/L across all accounts. Useful for seeing your total AAPL exposure, for example, regardless of which brokerage accounts hold it.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Click "Summarize Tickers"</h4>
+        <p>The button sits next to the <strong>Sankey View</strong> button in the top-right of the Holdings card. Clicking it replaces the Holdings table with the consolidated ticker-level summary.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Read the Consolidated View</h4>
+        <p>Each row represents one ticker symbol. All open positions across accounts are aggregated into that single row — if you hold AAPL in two accounts, they appear as one combined AAPL row.</p>
+        <div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>The Account filter is respected — if you have specific accounts selected, only positions in those accounts are included in the aggregation.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Summarize Tickers Columns</h4>
+        <p>The consolidated table shows the following columns:</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Column</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>Ticker</td><td>Stock symbol (one row per unique ticker across all accounts)</td></tr>
+        <tr><td>Shares</td><td>Total remaining shares held across all accounts</td></tr>
+        <tr><td>Value</td><td>Total current market value (Shares × Current Price)</td></tr>
+        <tr><td>Price Chg ($)</td><td>Dollar change in price since previous market close</td></tr>
+        <tr><td>Day P/L</td><td>Total dollar day gain/loss across all accounts for this ticker</td></tr>
+        <tr><td>Day P/L %</td><td>Percentage day change for this ticker</td></tr>
+        <tr><td>Total P/L</td><td>Total unrealised gain/loss across all accounts for this ticker</td></tr>
+        <tr><td>Total P/L %</td><td>Total P/L as a percentage of the combined cost basis</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="steps" style="margin-top:20px">
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Click "Summarize Tickers" Again to Return to the Holdings Table</h4>
+        <p>The button toggles — clicking it a second time dismisses the summary and restores the standard Holdings table.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-warn" style="margin-top:14px">
+    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span><strong>Mutually exclusive with Sankey View:</strong> Opening Summarize Tickers automatically closes the Sankey diagram, and vice versa. Only one alternate view can be active at a time.</span>
+  </div>
+</section>
+
+<!-- ═══════ 4. TRANSACTIONS ═══════ -->
+<section class="section" id="transactions">
+  <div class="section-num">Section 04</div>
+  <div class="section-header">
+    <div class="section-icon ic-gold">
+      <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+    </div>
+    <h2>Transactions</h2>
+  </div>
+  <p class="section-sub">Record every buy and sell. Import from CSV, search and filter, view realized P&amp;L history, and export for external use.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Adding a Transaction</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h4>Click "+ Add Transaction"</h4><p>The transaction form appears at the top of the page.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><h4>Fill in the Fields</h4><p>See the field reference below.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h4>Click Save</h4><p>The transaction is recorded immediately. Holdings and Dashboard reflect the change on the next refresh.</p></div>
+    </div>
+  </div>
+
+  <div class="fields" style="margin-top:20px">
+    <div class="field"><div class="field-name">Date</div><div class="field-desc">Trade date in <strong>YYYY-MM-DD</strong> format.</div></div>
+    <div class="field"><div class="field-name">Account</div><div class="field-desc">Select from your configured brokerage accounts.</div></div>
+    <div class="field"><div class="field-name">Ticker</div><div class="field-desc">Stock symbol — automatically uppercased.</div></div>
+    <div class="field"><div class="field-name">Status</div><div class="field-desc"><strong>Open</strong> = buy (shares acquired). <strong>Closed</strong> = sell (shares disposed).</div></div>
+    <div class="field"><div class="field-name">Qty</div><div class="field-desc">Number of shares traded.</div></div>
+    <div class="field"><div class="field-name">Price</div><div class="field-desc">Price per share at time of trade.</div></div>
+    <div class="field"><div class="field-name">Total</div><div class="field-desc">Total trade value. Auto-calculated from Qty × Price but can be overridden.</div></div>
+    <div class="field"><div class="field-name">Notes</div><div class="field-desc">Optional free-text notes for your records.</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Searching &amp; Filtering</h3>
+  <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+    <div class="card"><div class="card-icon ic-blue"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h4>Search</h4><p>Free-text search across all transaction fields.</p></div>
+    <div class="card"><div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><h4>Date Range</h4><p>Filter by From and To dates to narrow a time window.</p></div>
+    <div class="card"><div class="card-icon ic-purple"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h4>Ticker</h4><p>Filter to show transactions for a specific stock symbol.</p></div>
+    <div class="card"><div class="card-icon ic-green"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><h4>Account</h4><p>Filter to show transactions for a specific brokerage account.</p></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Realized P&amp;L Chart</h3>
+  <p style="font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:20px">The Realized P&amp;L Chart displays a bar chart of closed-position gains and losses by date, giving you a visual history of when and how much profit or loss was realized from sold positions.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Chart Location and Default View</h4>
+        <p>The Realized P&amp;L Chart appears on the Transactions page above the positions table. By default it opens showing the last <strong>5 trading days (5D)</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Period Buttons</h4>
+        <p>Use the period selector to change the time window displayed in the chart:</p>
+        <div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Available periods: <strong>1D · 5D · 1M · 3M · 6M · YTD · 1Y · 5Y · Max</strong></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Calendar Padding for Empty Days</h4>
+        <p>Trading days with no closed positions appear as <strong>blank columns</strong> in the chart — the x-axis always follows the calendar accurately, so gaps are clearly visible rather than compressed away.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Click a Bar to Filter the Positions Table</h4>
+        <p>Clicking any bar in the chart filters the closed positions table below to show only trades closed on that specific date. A <strong>Clear</strong> banner appears at the top of the table — click it to reset the filter and show all positions again.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:14px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>Green bars indicate net realized gains for that date; red bars indicate net realized losses. The y-axis scales automatically to the range of values in the selected period.</span>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Importing Transactions (CSV)</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Click "Import CSV"</h4>
+        <p>A file chooser opens. Select your CSV file.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Required CSV Columns</h4>
+        <p>Column names are <strong>case-insensitive</strong> — Account, account, and ACCOUNT all work.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Column</th><th>Description</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td>date</td><td>Trade date (YYYY-MM-DD)</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>account</td><td>Brokerage account name</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>ticker</td><td>Stock symbol</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>status</td><td>open or closed</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>qty</td><td>Number of shares</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>price</td><td>Price per share</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>total</td><td>Total trade value</td><td><span class="tag tag-green">Required</span></td></tr>
+        <tr><td>notes</td><td>Free-text notes</td><td><span class="tag tag-blue">Optional</span></td></tr>
+        <tr><td>id</td><td>Unique row ID — auto-generated if missing</td><td><span class="tag tag-blue">Optional</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:14px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span><strong>Duplicate-safe:</strong> If you import the same CSV twice, duplicate rows (matched by their ID) are skipped automatically. Only new rows are added.</span>
+  </div>
+  <div class="alert alert-success" style="margin-top:10px">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span><strong>Auto-accounts:</strong> Any new account names found in the CSV are automatically added to your accounts list — no manual setup needed.</span>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Deleting a Transaction</h3>
+  <div class="step" style="padding:16px 0">
+    <div class="step-num" style="width:36px;height:36px;margin-top:0">→</div>
+    <div class="step-body">
+      <h4>Click the × Button on Any Row</h4>
+      <p>Deletion is immediate. Holdings are recalculated automatically. There is no undo — export your data first if needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 5. RISK ANALYSIS ═══════ -->
+<section class="section" id="risk">
+  <div class="section-num">Section 05</div>
+  <div class="section-header">
+    <div class="section-icon ic-purple">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <h2>Risk Analysis</h2>
+  </div>
+  <p class="section-sub">Deep-dive into any stock — company overview, live fundamentals, price history, and financial statements, all from Yahoo Finance.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">→</div>
+      <div class="step-body">
+        <h4>How to Open</h4>
+        <p>Click any <strong>ticker link</strong> in the Holdings table or Transactions page. The Risk Analysis panel opens for that stock.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon ic-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+      <h4>Company Overview</h4>
+      <p>Name, sector, industry, description, market cap, P/E ratio, EPS, 52-week high/low, dividend yield, and beta.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-green"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <h4>Price Chart</h4>
+      <p>Historical price chart with period buttons: 1M · 3M · 6M · 1Y · 3Y · 5Y.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+      <h4>Analyst Targets</h4>
+      <p>Analyst recommendation (Strong Buy → Strong Sell), target price low / mean / high, and next earnings date.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-purple"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <h4>Financials</h4>
+      <p>Revenue, Gross Profit, Operating Income, Net Income, and Free Cash Flow with year-over-year change indicators.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 6. SETTINGS ═══════ -->
+<section class="section" id="settings">
+  <div class="section-num">Section 06</div>
+  <div class="section-header">
+    <div class="section-icon ic-red">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+    </div>
+    <h2>Settings</h2>
+  </div>
+  <p class="section-sub">Manage accounts, change your password, reset data, and handle licensing.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Account Management</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">+</div>
+      <div class="step-body">
+        <h4>Add Account</h4>
+        <p>Type a name in the Add Account field and click <strong>Add</strong>. The account appears in all dropdowns immediately.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">✎</div>
+      <div class="step-body">
+        <h4>Rename Account</h4>
+        <p>Select an account from the dropdown, type the new name, and click <strong>Rename</strong>. All transactions referencing the old name are updated automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">✕</div>
+      <div class="step-body">
+        <h4>Delete Account</h4>
+        <p>Removes the account from the list and dropdowns. Existing transactions are <strong>not affected</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Change Password</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h4>Enter Current Password</h4><p>Verify your identity before making any changes.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><h4>Enter New Password Twice</h4><p>Both fields must match. Minimum 6 characters.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h4>Click Save</h4><p>The new password takes effect immediately.</p></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Data Reset</h3>
+  <div class="alert alert-danger">
+    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span><strong>Resets are permanent and cannot be undone.</strong> Export your data before resetting.</span>
+  </div>
+  <div class="cards" style="margin-top:16px;grid-template-columns:1fr 1fr">
+    <div class="card">
+      <div class="card-icon ic-gold"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg></div>
+      <h4>Reset Holdings Only</h4>
+      <p>Clears all transactions and resets computed holdings. Requires your username and password to confirm.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon ic-red"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+      <h4>Full Reset</h4>
+      <p>Clears all transactions, holdings, targets, and price cache. Requires credentials.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Product Key Activation</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h4>Go to Settings → License</h4><p>Your current license status is shown at the top of the section.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Enter Your Product Key</h4>
+        <p>Keys follow this format:</p>
+        <div class="key-format"><span class="k-seg">ANT</span><span class="k-sep">-</span><span class="k-seg">XXXXX</span><span class="k-sep">-</span><span class="k-seg">XXXXX</span><span class="k-sep">-</span><span class="k-seg">XXXXX</span><span class="k-sep">-</span><span class="k-chk">CCCCC</span></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h4>Click Activate</h4><p>The trial expiry is removed. The full license does not expire.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 7. EXPORTING DATA ═══════ -->
+<section class="section" id="export">
+  <div class="section-num">Section 07</div>
+  <div class="section-header">
+    <div class="section-icon ic-cyan">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </div>
+    <h2>Exporting Data</h2>
+  </div>
+  <p class="section-sub">Export your data at any time. A native Windows Save As dialog appears for each export — choose any folder on your computer.</p>
+
+  <div class="export-grid">
+    <div class="export-card">
+      <div class="exp-icon ic-blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+      <h4>Transactions</h4>
+      <p>All transaction records with every field.</p>
+      <div class="exp-format" style="color:var(--acc)">CSV · Transactions page → Export CSV</div>
+    </div>
+    <div class="export-card">
+      <div class="exp-icon ic-green"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+      <h4>Holdings</h4>
+      <p>Computed holdings snapshot with all position metrics.</p>
+      <div class="exp-format" style="color:var(--green)">CSV · Holdings page → Export CSV</div>
+    </div>
+    <div class="export-card">
+      <div class="exp-icon ic-gold"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div>
+      <h4>T-Index Report</h4>
+      <p>Full transaction index report in Excel format.</p>
+      <div class="exp-format" style="color:var(--gold)">XLSX · Transactions page → Export T-Index</div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:20px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>A native Windows <strong>Save As</strong> dialog appears for every export. You can choose your file name and destination folder freely.</span>
+  </div>
+</section>
+
+<!-- ═══════ 8. DATA & BACKUPS ═══════ -->
+<section class="section" id="data">
+  <div class="section-num">Section 08</div>
+  <div class="section-header">
+    <div class="section-icon ic-teal">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    </div>
+    <h2>Data &amp; Backups</h2>
+  </div>
+  <p class="section-sub">Your data is stored in a protected folder that MSI upgrades never touch. Your data is always safe across version updates.</p>
+
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Where Your Data Lives</h3>
+  <div class="path-box">
+    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    C:\Users\&lt;YourName&gt;\AppData\Local\ANT Portfolio Tracker\data\
+  </div>
+  <div class="alert alert-success" style="margin-top:12px">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span>This folder is <strong>never touched by MSI upgrades</strong>. Installing a new version does not erase your data.</span>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Files in the Data Folder</h3>
+  <div class="file-list">
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="file-name">transactions.csv</div>
+      <div class="file-desc">All transaction records — the primary data source.</div>
+    </div>
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="file-name">holdings.csv</div>
+      <div class="file-desc">Computed holdings snapshot (updated on every transaction change).</div>
+    </div>
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="file-name">accounts.json</div>
+      <div class="file-desc">Your configured brokerage account names.</div>
+    </div>
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="file-name">targets.json</div>
+      <div class="file-desc">Price targets you have set for individual tickers.</div>
+    </div>
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="file-name">auth.dat</div>
+      <div class="file-desc">Encrypted credentials (never open or edit this file).</div>
+    </div>
+    <div class="file-row">
+      <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="file-name">license.dat</div>
+      <div class="file-desc">Encrypted license state (never open or edit this file).</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="font-size:.9rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px">Manual Backup Steps</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open File Explorer</h4>
+        <p>Press <strong>Win + E</strong> to open File Explorer.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Navigate to the Data Folder</h4>
+        <p>Paste this path in the address bar:</p>
+        <div class="path-box" style="margin-top:8px">
+          <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          %LOCALAPPDATA%\ANT Portfolio Tracker\data
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Copy the Entire Folder</h4>
+        <p>Select all files (<strong>Ctrl+A</strong>), copy (<strong>Ctrl+C</strong>), and paste them into your preferred backup location — a USB drive, OneDrive, or any folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Store Safely</h4>
+        <p>Label the folder with today's date so you can identify backups over time.</p>
+        <div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Automatic scheduled backups are planned for a future version of the app.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 9. LICENSE ═══════ -->
+<section class="section" id="license">
+  <div class="section-num">Section 09</div>
+  <div class="section-header">
+    <div class="section-icon ic-purple">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h2>License</h2>
+  </div>
+  <p class="section-sub">ANT Portfolio Tracker runs on a 90-day free trial. Purchase a full license to remove the expiry.</p>
+
+  <div class="lic-grid">
+    <div class="lic-card trial">
+      <div class="lic-type">Trial License</div>
+      <h3>Free Trial</h3>
+      <p>90 days from the date of first setup. All features are fully available.</p>
+      <ul class="lic-features">
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>All features unlocked</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>90-day window</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Expiry banner shown near end</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Upgrade at any time in Settings</li>
+      </ul>
+    </div>
+    <div class="lic-card full">
+      <div class="lic-type">Full License</div>
+      <h3>Full License</h3>
+      <p>Purchased from NavigateMaster. Enter your product key to activate.</p>
+      <ul class="lic-features">
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>All features unlocked</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Never expires</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Survives app reinstalls</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:20px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>To purchase a license or get support, email <strong>nishan@navigatemaster.com</strong></span>
+  </div>
+</section>
+
+<!-- ═══════ 10. FAQ ═══════ -->
+<section class="section" id="faq">
+  <div class="section-num">Section 10</div>
+  <div class="section-header">
+    <div class="section-icon ic-blue">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+  </div>
+  <p class="section-sub">Answers to the most common questions.</p>
+
+  <div class="faqs">
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> Do I need to uninstall the old version before installing a new one?</div>
+      <div class="faq-a"><p><strong>No.</strong> Simply run the new MSI installer over the existing installation. The upgrade happens in place and your data is always preserved.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> My account names are not showing in the filter after importing a CSV.</div>
+      <div class="faq-a"><p>After a CSV import, any account names found in the file are automatically added to your accounts list. If they still don't appear, verify that your CSV has an <code style="background:var(--bg4);padding:1px 6px;border-radius:4px;font-size:.8rem;color:var(--acc3)">account</code> column. The column name is case-insensitive (Account, ACCOUNT, account all work).</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> Can I select multiple accounts in the filter?</div>
+      <div class="faq-a"><p><strong>Yes.</strong> Click the Filter by Account dropdown and check as many accounts as you need. The Dashboard cards, performance chart, Holdings table, allocation chart, and Sankey diagram all update together.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> Where does live price data come from?</div>
+      <div class="faq-a"><p>Prices are fetched from <strong>Yahoo Finance</strong> in real time. An internet connection is required. Prices are cached for 30 seconds to avoid excessive requests. If a price appears stale, click the Refresh button on the Holdings page.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> The performance chart is blank / showing no data.</div>
+      <div class="faq-a"><p>The chart requires at least one <strong>Open</strong> transaction with a remaining quantity greater than zero. Make sure you have added or imported buy transactions with Status = Open.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> Can I import the same CSV file twice?</div>
+      <div class="faq-a"><p><strong>Yes.</strong> Duplicate rows are detected by their unique ID and skipped automatically. Only genuinely new rows are added — you will never get duplicates from re-importing.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> How do I back up my data?</div>
+      <div class="faq-a"><p>Copy the entire folder at <code style="background:var(--bg4);padding:1px 6px;border-radius:4px;font-size:.8rem;color:var(--acc3)">%LOCALAPPDATA%\ANT Portfolio Tracker\data\</code> to any location of your choice. This folder is never touched by app reinstalls, so your data is always preserved there.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> The app window didn't open — I only see a browser tab.</div>
+      <div class="faq-a"><p>This means the <strong>Edge WebView2 Runtime</strong> is not installed on this machine. The app falls back to your default browser automatically. To restore the native window experience, download and install the <strong>Microsoft Edge WebView2 Runtime</strong> from Microsoft's website, then restart the app.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> When will automatic backups be available?</div>
+      <div class="faq-a"><p>Automatic rolling backups (daily snapshots kept for 30 days) are planned for the next major version. Until then, please back up your data folder manually as described in Section 08.</p></div>
+    </div>
+    <div class="faq">
+      <div class="faq-q"><span class="q-badge">Q</span> How do I see all my holdings rolled up by ticker across accounts?</div>
+      <div class="faq-a"><p>Go to Holdings and click <strong>Summarize Tickers</strong>. This shows a consolidated table with each ticker as one row, aggregating shares and P/L across all accounts (or just the filtered accounts if you have an account filter active).</p></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:48px 0 12px;color:var(--text3);font-size:.78rem;line-height:1.8">
+    ANT Portfolio Tracker v5.7 &nbsp;·&nbsp; © 2026 Thapaliya &amp; Thapaliya LLC dba NavigateMaster &nbsp;·&nbsp; All rights reserved<br>
+    <a href="mailto:nishan@navigatemaster.com" style="color:var(--acc);text-decoration:none">nishan@navigatemaster.com</a>
+  </div>
+</section>
+
+</main>
+
+<script>
+// Highlight active nav item on scroll
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('nav a');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.classList.remove('active'));
+      const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+},{rootMargin:'-30% 0px -60% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
