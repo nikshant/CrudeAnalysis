@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technology Mapping — Nishan Thapaliya</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090F;--surf:#0C0F1C;--surf2:#121629;--surf3:#1a2035;
+  --bord:rgba(255,255,255,.07);--bord2:rgba(212,168,64,.22);
+  --gold:#D4A840;--amber:#F59E0B;--goldDim:rgba(212,168,64,.1);
+  --tx:#EAE0CC;--txd:rgba(234,224,204,.6);--txm:rgba(234,224,204,.28);
+  --grn:#22C77E;--blu:#4B8EF0;--org:#F97316;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;
+  min-height:100vh;padding:48px 40px 80px;}
+
+h1{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:600;
+  color:#fff;margin-bottom:6px;}
+.subtitle{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--txm);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:36px;}
+
+/* TABLE WRAPPER */
+.table-wrap{overflow-x:auto;border:1px solid var(--bord);border-radius:12px;}
+table{width:100%;border-collapse:collapse;min-width:720px;}
+
+/* HEADER */
+thead tr th{background:var(--surf2);padding:14px 10px;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--bord);
+  white-space:nowrap;position:sticky;top:0;z-index:10;}
+thead tr th:first-child{text-align:left;padding-left:20px;min-width:200px;
+  color:var(--txd);}
+thead tr th.co-phm{color:#22C77E;}
+thead tr th.co-bah{color:#4B8EF0;}
+thead tr th.co-fid{color:#F59E0B;}
+thead tr th.co-yrc{color:#F97316;}
+thead tr th.co-lum{color:#22C77E;}
+thead tr th.co-gs {color:#F59E0B;}
+
+/* CATEGORY ROWS */
+tr.cat-row td{background:var(--surf3);padding:8px 20px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--gold);
+  border-top:1px solid var(--bord2);border-bottom:1px solid var(--bord);}
+
+/* DATA ROWS */
+tbody tr.data-row{border-bottom:1px solid var(--bord);transition:background .15s;}
+tbody tr.data-row:hover{background:rgba(255,255,255,.025);}
+tbody tr.data-row td{padding:10px 10px;}
+tbody tr.data-row td:first-child{padding-left:20px;font-size:13px;
+  color:var(--tx);font-weight:500;}
+tbody tr.data-row td:not(:first-child){text-align:center;vertical-align:middle;}
+
+/* CHECKBOXES */
+.cb-wrap{display:flex;align-items:center;justify-content:center;}
+input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;
+  width:20px;height:20px;border-radius:5px;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.15);background:var(--surf2);
+  transition:all .15s;position:relative;flex-shrink:0;}
+input[type=checkbox]:hover{border-color:rgba(212,168,64,.4);}
+input[type=checkbox]:checked{border-color:var(--gold);background:rgba(212,168,64,.18);}
+input[type=checkbox]:checked::after{
+  content:'✓';position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;
+  font-size:12px;color:var(--gold);font-weight:700;line-height:1;}
+
+/* Company-colored checked states */
+.cb-phm input:checked{border-color:#22C77E;background:rgba(34,199,126,.15);}
+.cb-phm input:checked::after{color:#22C77E;}
+.cb-bah input:checked{border-color:#4B8EF0;background:rgba(75,142,240,.15);}
+.cb-bah input:checked::after{color:#4B8EF0;}
+.cb-fid input:checked{border-color:#F59E0B;background:rgba(245,158,11,.15);}
+.cb-fid input:checked::after{color:#F59E0B;}
+.cb-yrc input:checked{border-color:#F97316;background:rgba(249,115,22,.15);}
+.cb-yrc input:checked::after{color:#F97316;}
+.cb-lum input:checked{border-color:#22C77E;background:rgba(34,199,126,.15);}
+.cb-lum input:checked::after{color:#22C77E;}
+.cb-gs  input:checked{border-color:#F59E0B;background:rgba(245,158,11,.15);}
+.cb-gs  input:checked::after{color:#F59E0B;}
+
+/* BUTTONS */
+.actions{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;align-items:center;}
+.btn-copy{background:var(--goldDim);border:1px solid var(--bord2);color:var(--gold);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:600;padding:12px 24px;border-radius:8px;
+  cursor:pointer;transition:all .2s;outline:none;}
+.btn-copy:hover{background:rgba(212,168,64,.2);border-color:var(--gold);}
+.btn-reset{background:transparent;border:1px solid var(--bord);color:var(--txd);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:500;padding:12px 24px;border-radius:8px;
+  cursor:pointer;transition:all .2s;outline:none;}
+.btn-reset:hover{border-color:rgba(255,255,255,.2);color:var(--tx);}
+
+/* OUTPUT */
+#output{display:none;margin-top:24px;background:var(--surf);border:1px solid var(--bord);
+  border-radius:10px;padding:24px;}
+#output h3{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.out-table{width:100%;border-collapse:collapse;}
+.out-table td,.out-table th{padding:8px 14px;font-size:12px;
+  border-bottom:1px solid var(--bord);text-align:left;}
+.out-table th{font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--txm);}
+.out-table td:first-child{color:var(--tx);font-weight:500;}
+.out-table td:last-child{color:var(--txd);font-size:11px;}
+.copy-done{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--grn);
+  display:none;letter-spacing:.06em;}
+
+/* LEGEND */
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;}
+.leg{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txd);}
+.leg-dot{width:9px;height:9px;border-radius:50%;}
+</style>
+</head>
+<body>
+
+<h1>Project – Technology Mapping</h1>
+<p class="subtitle">Check the companies each technology was used at · Pre-filled from resume</p>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#22C77E"></div>Partners Health Mgmt</div>
+  <div class="leg"><div class="leg-dot" style="background:#4B8EF0"></div>Booz Allen Hamilton</div>
+  <div class="leg"><div class="leg-dot" style="background:#F59E0B"></div>Fidelity Investments</div>
+  <div class="leg"><div class="leg-dot" style="background:#F97316"></div>YRC Worldwide</div>
+  <div class="leg"><div class="leg-dot" style="background:#22C77E;opacity:.6"></div>Lumeris</div>
+  <div class="leg"><div class="leg-dot" style="background:#F59E0B;opacity:.6"></div>GreenSky</div>
+</div>
+
+<div class="table-wrap">
+<table id="mappingTable">
+<thead>
+  <tr>
+    <th>Technology</th>
+    <th class="co-phm">Partners<br>Health</th>
+    <th class="co-bah">Booz Allen<br>Hamilton</th>
+    <th class="co-fid">Fidelity<br>Investments</th>
+    <th class="co-yrc">YRC<br>Worldwide</th>
+    <th class="co-lum">Lumeris</th>
+    <th class="co-gs">GreenSky</th>
+  </tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="actions">
+  <button class="btn-copy" onclick="showOutput()">📋 Show Mapping Summary</button>
+  <button class="btn-copy" onclick="copyJSON()" style="background:transparent;border-color:var(--bord);">⬇ Copy JSON</button>
+  <button class="btn-reset" onclick="resetAll()">Reset All</button>
+  <span class="copy-done" id="copyDone">✓ Copied to clipboard</span>
+</div>
+
+<div id="output">
+  <h3>Current Mapping</h3>
+  <table class="out-table">
+    <thead><tr><th>Technology</th><th>Category</th><th>Companies</th></tr></thead>
+    <tbody id="outBody"></tbody>
+  </table>
+</div>
+
+<script>
+const COMPANIES = [
+  {key:'phm', label:'Partners Health Mgmt',  color:'#22C77E'},
+  {key:'bah', label:'Booz Allen Hamilton',   color:'#4B8EF0'},
+  {key:'fid', label:'Fidelity Investments',  color:'#F59E0B'},
+  {key:'yrc', label:'YRC Worldwide',         color:'#F97316'},
+  {key:'lum', label:'Lumeris',               color:'#22C77E'},
+  {key:'gs',  label:'GreenSky',              color:'#F59E0B'},
+];
+
+// [tech name, category, [phm, bah, fid, yrc, lum, gs]]
+const TECHS = [
+  // ── BI & Visualization ──
+  ['Power BI',              'BI & Visualization',       [1,1,1,1,1,1]],
+  ['Microsoft Fabric',      'BI & Visualization',       [1,1,0,1,0,0]],
+  ['Power BI Report Server','BI & Visualization',       [1,0,0,0,0,0]],
+  ['DAX Studio',            'BI & Visualization',       [1,1,1,1,0,0]],
+  ['Tableau',               'BI & Visualization',       [0,1,0,0,1,0]],
+  ['SSRS',                  'BI & Visualization',       [0,0,0,1,0,0]],
+  ['SSAS Tabular',          'BI & Visualization',       [0,0,0,0,0,1]],
+  ['Business Objects',      'BI & Visualization',       [0,0,0,1,0,0]],
+  // ── Cloud & Data Engineering ──
+  ['Azure Data Factory',    'Cloud & Data Engineering', [1,1,0,0,0,0]],
+  ['Azure Synapse Analytics','Cloud & Data Engineering',[0,1,0,0,0,0]],
+  ['Databricks',            'Cloud & Data Engineering', [1,1,0,0,0,0]],
+  ['Snowflake',             'Cloud & Data Engineering', [1,0,1,0,0,0]],
+  ['ADLS Gen2',             'Cloud & Data Engineering', [1,1,0,0,0,0]],
+  // ── Databases & SQL ──
+  ['SQL Server',            'Databases & SQL',          [0,0,0,1,1,1]],
+  ['Azure SQL',             'Databases & SQL',          [1,0,0,0,0,0]],
+  ['T-SQL',                 'Databases & SQL',          [1,1,0,1,1,1]],
+  ['SSIS',                  'Databases & SQL',          [0,0,0,1,1,0]],
+  ['Azure Data Studio',     'Databases & SQL',          [0,0,0,1,0,0]],
+  // ── Platform & Tools ──
+  ['Power Automate',        'Platform & Tools',         [1,0,1,0,0,0]],
+  ['PowerShell',            'Platform & Tools',         [0,0,1,0,0,0]],
+  ['Visual Studio',         'Platform & Tools',         [1,0,0,1,1,1]],
+  ['Postman',               'Platform & Tools',         [0,1,0,1,0,0]],
+  ['REST APIs',             'Platform & Tools',         [1,0,1,1,0,0]],
+  ['Datadog',               'Platform & Tools',         [0,0,1,0,0,0]],
+  ['Collibra',              'Platform & Tools',         [0,0,1,0,0,0]],
+];
+
+/* ── Build table ── */
+const tbody = document.getElementById('tbody');
+let lastCat = '';
+TECHS.forEach(([name, cat, checks], ti) => {
+  if(cat !== lastCat){
+    lastCat = cat;
+    const cr = document.createElement('tr');
+    cr.className = 'cat-row';
+    cr.innerHTML = `<td colspan="7">${cat}</td>`;
+    tbody.appendChild(cr);
+  }
+  const tr = document.createElement('tr');
+  tr.className = 'data-row';
+  let tds = `<td>${name}</td>`;
+  COMPANIES.forEach((co, ci) => {
+    tds += `<td><div class="cb-wrap cb-${co.key}">
+      <input type="checkbox" id="cb_${ti}_${ci}" data-tech="${ti}" data-co="${ci}"
+        ${checks[ci] ? 'checked' : ''}>
+    </div></td>`;
+  });
+  tr.innerHTML = tds;
+  tbody.appendChild(tr);
+});
+
+/* ── Show summary ── */
+function showOutput(){
+  const out = document.getElementById('outBody');
+  out.innerHTML = '';
+  TECHS.forEach(([name, cat, _], ti) => {
+    const cos = [];
+    COMPANIES.forEach((co, ci) => {
+      if(document.getElementById(`cb_${ti}_${ci}`).checked)
+        cos.push(`<span style="color:${co.color};font-weight:600">${co.label}</span>`);
+    });
+    if(cos.length){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${name}</td><td style="color:var(--txm);font-size:11px">${cat}</td><td>${cos.join(' &nbsp;·&nbsp; ')}</td>`;
+      out.appendChild(tr);
+    }
+  });
+  document.getElementById('output').style.display='block';
+  document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── Copy JSON ── */
+function copyJSON(){
+  const result = {};
+  TECHS.forEach(([name,cat,_],ti)=>{
+    const cos=[];
+    COMPANIES.forEach((co,ci)=>{
+      if(document.getElementById(`cb_${ti}_${ci}`).checked) cos.push(co.key);
+    });
+    if(cos.length) result[name]={category:cat,companies:cos};
+  });
+  navigator.clipboard.writeText(JSON.stringify(result,null,2)).then(()=>{
+    const el=document.getElementById('copyDone');
+    el.style.display='inline';
+    setTimeout(()=>el.style.display='none',2500);
+  });
+}
+
+/* ── Reset ── */
+const DEFAULTS = TECHS.map(t=>t[2]);
+function resetAll(){
+  TECHS.forEach((_,ti)=>COMPANIES.forEach((_,ci)=>{
+    document.getElementById(`cb_${ti}_${ci}`).checked = DEFAULTS[ti][ci]===1;
+  }));
+  document.getElementById('output').style.display='none';
+}
+</script>
+</body>
+</html>
